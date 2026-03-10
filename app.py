@@ -177,3 +177,14 @@ arquivo = grafo_contratos.gerar_grafo()
 
 with open(arquivo,"r",encoding="utf-8") as f:
     components.html(f.read(), height=520)
+
+
+import redes_suspeitas
+
+st.subheader("🧠 Detector de redes suspeitas de contratos")
+
+df_redes = redes_suspeitas.detectar_redes_suspeitas()
+
+st.dataframe(df_redes)
+
+st.bar_chart(df_redes.set_index("empresa")["score_centralidade"])
