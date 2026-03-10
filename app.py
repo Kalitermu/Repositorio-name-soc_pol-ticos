@@ -526,3 +526,36 @@ st.dataframe(df_valores)
 st.write("Grupos de valores próximos")
 
 st.dataframe(df_grupos)
+
+
+import pydeck as pdk
+import mapa_contratos_suspeitos
+
+st.subheader("🗺️ Mapa de contratos suspeitos")
+
+df_map = mapa_contratos_suspeitos.contratos_suspeitos()
+
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df_map,
+    get_position="[lon, lat]",
+    get_radius="raio",
+    get_fill_color="color",
+    pickable=True
+)
+
+view_state = pdk.ViewState(
+    latitude=-23.96,
+    longitude=-46.36,
+    zoom=8
+)
+
+deck = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={
+        "text": "Cidade: {cidade}\nValor: {valor}"
+    }
+)
+
+st.pydeck_chart(deck)
