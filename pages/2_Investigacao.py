@@ -48,3 +48,14 @@ else:
     st.subheader("🚨 Alertas encontrados")
 
     st.dataframe(alertas)
+
+import detector_cartel
+
+st.subheader("🔗 Possível cartel de empresas")
+
+df_cartel = detector_cartel.detectar_cartel()
+
+if df_cartel.empty:
+    st.info("Nenhuma empresa suspeita encontrada.")
+else:
+    st.dataframe(df_cartel)
