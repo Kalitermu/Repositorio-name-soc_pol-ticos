@@ -4,6 +4,23 @@ st.markdown("""
 
 <style>
 
+.stApp {background-color:#ff8c00;}
+
+h1,h2,h3,h4,h5,h6 {color:white;}
+
+p,div,span,label {color:white;}
+
+</style>
+
+""", unsafe_allow_html=True)
+
+
+import streamlit as st
+
+st.markdown("""
+
+<style>
+
 .stApp {background-color: #ffb347;}
 
 </style>
