@@ -1,17 +1,16 @@
-
 import requests
 import pandas as pd
 
-def dados_tesouro():
+def buscar_dados_municipio(codigo_ibge="3550308"):
+    url = f"https://apidatalake.tesouro.gov.br/ords/siconfi/tt/rreo?codigo_ibge={codigo_ibge}"
 
-    url = "https://apidatalake.tesouro.gov.br/ords/siconfi/tt/resultado"
+    try:
+        r = requests.get(url, timeout=30)
+        dados = r.json()["items"]
 
-    r = requests.get(url)
+        df = pd.DataFrame(dados)
 
-    dados = r.json()
-
-    if "items" in dados:
-        df = pd.DataFrame(dados["items"])
         return df
 
-    return pd.DataFrame()
+    except Exception as e:
+        return pd.DataFrame()

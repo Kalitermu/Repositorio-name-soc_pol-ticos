@@ -1,38 +1,40 @@
 import streamlit as st
 import pandas as pd
-import random
+from tesouro_api import buscar_dados_municipio
 
 st.title("🚨 Radar Fiscal")
 
-st.write("Análise estatística de gastos públicos.")
+cidade = st.selectbox(
+    "Escolha o município",
+    {
+        "São Paulo": "3550308",
+        "Praia Grande": "3541000",
+        "Santos": "3548500"
+    }
+)
 
-# Dados simulados (até conectar API real)
+df = buscar_dados_municipio(cidade)
 
-dados = pd.DataFrame({
-    "conta": ["Saúde", "Educação", "Infraestrutura", "Segurança", "Assistência Social"],
-    "valor": [
-        random.randint(10000000, 80000000),
-        random.randint(10000000, 80000000),
-        random.randint(10000000, 80000000),
-        random.randint(10000000, 80000000),
-        random.randint(10000000, 80000000)
-    ]
-})
+if df.empty:
+    st.warning("Não foi possível carregar dados do Tesouro Nacional.")
+else:
 
-total = dados["valor"].sum()
-media = dados["valor"].mean()
-desvio = dados["valor"].std()
+    valores = pd.to_numeric(df["valor"], errors="coerce").dropna()
 
-st.subheader("📊 Estatísticas")
+    total = valores.sum()
+    media = valores.mean()
+    desvio = valores.std()
 
-st.metric("Somatório do orçamento", f"R$ {total:,.0f}")
-st.metric("Média de gastos", f"R$ {media:,.0f}")
-st.metric("Desvio padrão", f"R$ {desvio:,.0f}")
+    st.subheader("📊 Estatísticas")
 
-st.subheader("📋 Principais contas")
+    st.metric("Somatório do orçamento", f"R$ {total:,.0f}")
+    st.metric("Média de gastos", f"R$ {media:,.0f}")
+    st.metric("Desvio padrão", f"R$ {desvio:,.0f}")
 
-st.dataframe(dados)
+    top = df.sort_values("valor", ascending=False).head(10)
 
-st.subheader("📈 Distribuição de despesas")
+    st.subheader("📋 Principais contas")
+    st.dataframe(top)
 
-st.bar_chart(dados.set_index("conta"))
+    st.subheader("📈 Distribuição de despesas")
+    st.bar_chart(top.set_index("conta")["valor"])
