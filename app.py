@@ -920,3 +920,19 @@ analise = comparador_obras.comparar_custos(dados_obras)
 
 st.dataframe(analise)
 
+
+
+import indice_risco
+
+st.subheader("📊 Índice de risco fiscal")
+
+try:
+
+    score = indice_risco.calcular_indice_risco(df)
+
+    st.metric("Score de risco", f"{score} / 10")
+
+except Exception as e:
+
+    st.write("erro risco:", e)
+
