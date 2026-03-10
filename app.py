@@ -442,3 +442,16 @@ deck = pdk.Deck(
 )
 
 st.pydeck_chart(deck)
+
+
+import api_transparencia
+
+st.subheader("🌐 Dados reais do Portal da Transparência")
+
+api_key = st.text_input("Digite sua chave da API")
+
+if api_key:
+
+    df_api = api_transparencia.dados_transparencia(api_key)
+
+    st.dataframe(df_api)
