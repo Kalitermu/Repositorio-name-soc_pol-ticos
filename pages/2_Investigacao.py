@@ -2,24 +2,24 @@ import streamlit as st
 import pandas as pd
 from tesouro_api import buscar_dados_municipio
 import investigacao_financeira
+import score_corrupcao
 
 st.title("🔎 Modo Investigação")
 
-st.write("""
-Ferramentas de análise investigativa de orçamento.
+cidades = {
+    "São Paulo": "3550308",
+    "Praia Grande": "3541000",
+    "Santos": "3548500"
+}
 
-Aqui aparecem:
-- contas com crescimento anormal
-- valores repetidos
-- picos de gasto
-- ranking de risco fiscal
-""")
+cidade = st.selectbox("Escolha a cidade", list(cidades.keys()))
+codigo = cidades[cidade]
 
-df = buscar_dados_municipio("3550308")
+df = buscar_dados_municipio(codigo)
 
 if df.empty:
 
-    st.warning("Não foi possível carregar dados do Tesouro.")
+    st.warning("Não foi possível carregar dados.")
 
 else:
 
@@ -29,15 +29,17 @@ else:
     elif "valor_item" in df.columns:
         df["valor_calc"] = pd.to_numeric(df["valor_item"], errors="coerce")
 
-    else:
-        st.error("Coluna de valor não encontrada.")
-        st.stop()
-
     df = df.dropna(subset=["valor_calc"])
+
+    score = score_corrupcao.calcular_score(df)
+
+    st.subheader("🚨 Score de risco fiscal")
+
+    st.metric("Score de corrupção", score)
 
     analise = investigacao_financeira.analisar(df)
 
-    st.subheader("📊 Resultado da investigação")
+    st.subheader("📊 Análise investigativa")
 
     st.dataframe(analise.head(20))
 
