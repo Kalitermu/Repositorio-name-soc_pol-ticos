@@ -825,3 +825,25 @@ except Exception as e:
 
     st.write("erro simulador:", e)
 
+
+st.subheader("🏆 Quem mais recebe dinheiro da prefeitura")
+
+try:
+
+    if "_conta_ref" in df.columns and "_valor_base" in df.columns:
+
+        ranking = (
+            df.groupby("_conta_ref")["_valor_base"]
+            .sum()
+            .sort_values(ascending=False)
+            .head(10)
+        )
+
+        st.dataframe(ranking)
+
+        st.bar_chart(ranking)
+
+except Exception as e:
+
+    st.write("erro ranking:", e)
+
