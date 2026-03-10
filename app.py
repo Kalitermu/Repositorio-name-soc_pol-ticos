@@ -383,3 +383,16 @@ df_prev = previsao_gastos.prever_gastos()
 st.dataframe(df_prev)
 
 st.bar_chart(df_prev.set_index("cidade")["previsao_2024"])
+
+
+import risco_fiscal
+
+st.subheader("⚠ Indicador de risco fiscal futuro")
+
+df_risco = risco_fiscal.risco_fiscal()
+
+st.dataframe(df_risco)
+
+st.bar_chart(
+    df_risco.set_index("cidade")["crescimento"]
+)
