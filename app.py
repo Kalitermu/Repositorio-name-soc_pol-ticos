@@ -584,3 +584,20 @@ if empresa:
     else:
 
         st.warning("Empresa não encontrada")
+
+
+import ranking_contas
+
+st.subheader("🚨 Top 10 contas orçamentárias mais suspeitas")
+
+if "df" in locals():
+
+    df_rank = ranking_contas.ranking_contas_suspeitas(df)
+
+    if not df_rank.empty:
+
+        st.dataframe(df_rank)
+
+        st.bar_chart(
+            df_rank.set_index("_conta_ref")["score_risco"]
+        )
