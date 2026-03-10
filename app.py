@@ -679,3 +679,20 @@ if "df_tempo" in locals():
 
     if not picos.empty:
         st.warning("Picos anormais detectados")
+
+
+import heatmap_gastos
+
+st.subheader("🔥 Heatmap de gastos públicos")
+
+if "df" in locals():
+
+    df_heat = heatmap_gastos.heatmap_gastos(df)
+
+    if not df_heat.empty:
+
+        st.dataframe(df_heat)
+
+        st.write("Mapa de intensidade dos gastos")
+
+        st.bar_chart(df_heat)
