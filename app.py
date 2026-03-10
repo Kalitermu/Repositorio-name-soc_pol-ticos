@@ -100,3 +100,14 @@ zoom=3
 deck = pdk.Deck(layers=[layer], initial_view_state=view_state)
 
 st.pydeck_chart(deck)
+
+
+import ia_risco
+
+st.subheader("🧠 Previsão de risco com IA")
+
+df_risco = ia_risco.prever_risco(df_contratos)
+
+st.dataframe(df_risco)
+
+st.bar_chart(df_risco.set_index("empresa")["score_risco"])
