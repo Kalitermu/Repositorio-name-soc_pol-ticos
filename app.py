@@ -624,3 +624,25 @@ if "df" in locals():
         st.bar_chart(
             df_cres.set_index("_conta_ref")["crescimento"]
         )
+
+
+import exportar_relatorio
+
+st.subheader("📄 Exportar relatório da investigação")
+
+if "df" in locals():
+
+    if st.button("Gerar relatório"):
+
+        arquivo = exportar_relatorio.gerar_relatorio(df)
+
+        if arquivo:
+
+            st.success("Relatório gerado")
+
+            with open(arquivo,"rb") as f:
+                st.download_button(
+                    label="Baixar CSV",
+                    data=f,
+                    file_name=arquivo
+                )
