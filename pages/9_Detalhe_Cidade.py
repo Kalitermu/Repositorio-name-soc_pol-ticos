@@ -32,3 +32,27 @@ grafico = {
 }
 
 st.bar_chart(grafico)
+
+
+import modules.gerar_relatorio as rel
+
+st.subheader("📄 Relatório Fiscal")
+
+if st.button("Gerar relatório PDF"):
+
+    cidade = dados["cidade"]
+    score = dados["score_risco"]
+    gasto = dados["gasto_total"]
+
+    arquivo = rel.gerar_pdf(
+        cidade,
+        score,
+        gasto
+    )
+
+    with open(arquivo,"rb") as f:
+        st.download_button(
+            "Baixar PDF",
+            f,
+            file_name="relatorio_fiscal.pdf"
+        )
