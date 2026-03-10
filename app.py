@@ -56,3 +56,15 @@ df_super = detector_superfaturamento.detectar_superfaturamento()
 
 st.dataframe(df_super)
 
+
+
+import detector_rede_empresas
+
+st.subheader("🧠 Empresas com contratos em vários municípios")
+
+df_rede = detector_rede_empresas.detectar_rede()
+
+st.dataframe(df_rede)
+
+st.bar_chart(df_rede.set_index("empresa")["valor_total"])
+
