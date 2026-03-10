@@ -646,3 +646,20 @@ if "df" in locals():
                     data=f,
                     file_name=arquivo
                 )
+
+
+import linha_tempo_gastos
+
+st.subheader("📈 Linha do tempo dos gastos públicos")
+
+if "df" in locals():
+
+    df_tempo = linha_tempo_gastos.linha_tempo_gastos(df)
+
+    if not df_tempo.empty:
+
+        st.dataframe(df_tempo)
+
+        st.line_chart(
+            df_tempo.set_index(df_tempo.columns[1])["_valor_base"]
+        )
