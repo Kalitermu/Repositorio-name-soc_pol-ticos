@@ -511,3 +511,18 @@ df_rep = repeticao_contratos.repeticao_por_orgao()
 st.dataframe(df_rep)
 
 st.bar_chart(df_rep.set_index("empresa")["contratos"])
+
+
+import fracionamento_contratos
+
+st.subheader("💰 Detector de possíveis fracionamentos de contratos")
+
+df_valores, df_grupos = fracionamento_contratos.detectar_valores_parecidos()
+
+st.write("Valores analisados")
+
+st.dataframe(df_valores)
+
+st.write("Grupos de valores próximos")
+
+st.dataframe(df_grupos)
