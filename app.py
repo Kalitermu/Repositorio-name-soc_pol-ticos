@@ -133,3 +133,14 @@ df_ranking = ranking_nacional.ranking_municipios()
 st.dataframe(df_ranking)
 
 st.bar_chart(df_ranking.set_index("municipio")["risco"])
+
+
+import painel_investigativo
+
+st.subheader("🕵 Painel investigativo")
+
+df_invest = painel_investigativo.painel_investigativo()
+
+st.dataframe(df_invest)
+
+st.bar_chart(df_invest.set_index("municipio")["gasto_publico"])
