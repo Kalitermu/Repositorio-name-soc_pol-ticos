@@ -455,3 +455,19 @@ if api_key:
     df_api = api_transparencia.dados_transparencia(api_key)
 
     st.dataframe(df_api)
+
+
+import pncp_api
+import tesouro_api
+
+st.subheader("🏢 Contratos públicos (PNCP)")
+
+df_contratos = pncp_api.contratos_pncp()
+
+st.dataframe(df_contratos)
+
+st.subheader("💰 Dados fiscais (Tesouro Nacional)")
+
+df_tesouro = tesouro_api.dados_tesouro()
+
+st.dataframe(df_tesouro)
