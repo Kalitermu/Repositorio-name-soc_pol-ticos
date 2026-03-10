@@ -409,3 +409,36 @@ st.dataframe(df_transp)
 st.bar_chart(
     df_transp.set_index("cidade")["score_transparencia"]
 )
+
+
+import pydeck as pdk
+import mapa_transparencia
+
+st.subheader("🗺️ Mapa de transparência municipal")
+
+df_map_transp = mapa_transparencia.mapa_transparencia()
+
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df_map_transp,
+    get_position="[lon, lat]",
+    get_radius="raio",
+    get_fill_color="color",
+    pickable=True
+)
+
+view_state = pdk.ViewState(
+    latitude=-23.96,
+    longitude=-46.36,
+    zoom=8
+)
+
+deck = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={
+        "text": "Cidade: {cidade}\nScore: {score}"
+    }
+)
+
+st.pydeck_chart(deck)
