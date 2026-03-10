@@ -304,3 +304,36 @@ alertas = alertas_areas.alertas_areas(df_area)
 
 for a in alertas:
     st.warning(a)
+
+
+import pydeck as pdk
+import mapa_investimentos
+
+st.subheader("🗺️ Mapa de investimento público por área")
+
+df_mapa = mapa_investimentos.mapa_investimentos()
+
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df_mapa,
+    get_position="[lon, lat]",
+    get_radius="raio",
+    get_fill_color="[0, 150, 255, 140]",
+    pickable=True
+)
+
+view_state = pdk.ViewState(
+    latitude=-23.96,
+    longitude=-46.36,
+    zoom=8
+)
+
+deck = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={
+        "text": "Município: {municipio}\nSaúde: {saude}\nEducação: {educacao}\nObras: {obras}"
+    }
+)
+
+st.pydeck_chart(deck)
