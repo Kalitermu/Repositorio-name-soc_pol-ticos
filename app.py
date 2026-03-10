@@ -337,3 +337,19 @@ deck = pdk.Deck(
 )
 
 st.pydeck_chart(deck)
+
+
+import ranking_eficiencia
+
+st.subheader("🏆 Ranking de eficiência pública")
+
+df_rank = ranking_eficiencia.ranking_eficiencia()
+
+st.dataframe(df_rank[[
+    "municipio",
+    "indice_eficiencia"
+]])
+
+st.bar_chart(
+    df_rank.set_index("municipio")["indice_eficiencia"]
+)
