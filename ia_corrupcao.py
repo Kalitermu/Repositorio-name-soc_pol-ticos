@@ -1,23 +1,24 @@
 import pandas as pd
 
-def analisar_corrupcao(df):
+def analisar(df):
 
     if df.empty:
         return pd.DataFrame()
 
-    valores = pd.to_numeric(df["valor_calc"], errors="coerce").dropna()
+    if "valor_calc" in df.columns:
+        valores = df["valor_calc"]
+    elif "valor" in df.columns:
+        valores = df["valor"]
+    else:
+        return pd.DataFrame()
 
     media = valores.mean()
-    desvio = valores.std()
 
-    df["alerta"] = "normal"
+    df["indice_risco"] = valores / media
 
-    df.loc[df["valor_calc"] > media * 2, "alerta"] = "🚨 gasto muito alto"
+    suspeitos = df[df["indice_risco"] > 2]
 
-    repetidos = valores.duplicated(keep=False)
+    resultado = suspeitos[["indice_risco"]].copy()
+    resultado["classificacao"] = "🚨 possivel corrupcao"
 
-    df.loc[repetidos, "alerta"] = "⚠ valor repetido"
-
-    df["score_risco"] = (df["valor_calc"] / media).round(2)
-
-    return df.sort_values("score_risco", ascending=False)
+    return resultado
