@@ -353,3 +353,22 @@ st.dataframe(df_rank[[
 st.bar_chart(
     df_rank.set_index("municipio")["indice_eficiencia"]
 )
+
+
+import evolucao_gastos
+import anomalia_orcamento
+
+st.subheader("📈 Evolução do orçamento público")
+
+df_hist = evolucao_gastos.evolucao_gastos()
+
+st.dataframe(df_hist)
+
+st.line_chart(df_hist.set_index("ano"))
+
+st.subheader("🚨 Detector de crescimento anormal")
+
+alertas = anomalia_orcamento.detectar_anomalia(df_hist)
+
+for a in alertas:
+    st.warning(a)
