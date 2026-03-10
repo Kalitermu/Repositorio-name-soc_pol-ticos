@@ -74,3 +74,29 @@ df_contratos = ranking_empresas.rename(columns={"empresa":"empresa","valor":"val
 alertas = detector_corrupcao.detectar_irregularidades(df_contratos)
 
 st.dataframe(alertas)
+
+
+import pydeck as pdk
+import mapa_brasil
+
+st.subheader("🗺 Mapa nacional de risco fiscal")
+
+df_mapa = mapa_brasil.dados_brasil()
+
+layer = pdk.Layer(
+"ScatterplotLayer",
+data=df_mapa,
+get_position='[lon, lat]',
+get_color='[200, 30, 0, 160]',
+get_radius=60000
+)
+
+view_state = pdk.ViewState(
+latitude=-14,
+longitude=-52,
+zoom=3
+)
+
+deck = pdk.Deck(layers=[layer], initial_view_state=view_state)
+
+st.pydeck_chart(deck)
