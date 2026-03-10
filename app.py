@@ -747,3 +747,31 @@ if "df" in locals():
         st.bar_chart(
             df_top.set_index("_conta_ref")["_valor_base"]
         )
+
+st.subheader("📊 Distribuição do dinheiro público")
+
+try:
+
+    mapa_funcoes = {
+        10:"Saúde",
+        12:"Educação",
+        15:"Urbanismo",
+        20:"Agricultura",
+        4:"Administração",
+        8:"Assistência social"
+    }
+
+    if "funcao" in df.columns:
+
+        df["area"] = df["funcao"].map(mapa_funcoes)
+
+        dist = df.groupby("area")["_valor_base"].sum().sort_values(ascending=False)
+
+        st.bar_chart(dist)
+
+        st.dataframe(dist)
+
+except Exception as e:
+
+    st.write("erro distribuição:", e)
+
