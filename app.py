@@ -111,3 +111,14 @@ df_risco = ia_risco.prever_risco(df_contratos)
 st.dataframe(df_risco)
 
 st.bar_chart(df_risco.set_index("empresa")["score_risco"])
+
+
+import programas_sociais
+
+st.subheader("🌎 Comparação com programas sociais")
+
+df_social = programas_sociais.dados_sociais()
+
+st.dataframe(df_social)
+
+st.bar_chart(df_social.set_index("cidade")["beneficiarios"])
