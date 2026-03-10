@@ -936,3 +936,27 @@ except Exception as e:
 
     st.write("erro risco:", e)
 
+
+
+import ranking_cidades
+
+st.subheader("🌎 Ranking de risco fiscal entre cidades")
+
+try:
+
+    dados = {
+        "São Vicente":df,
+        "Praia Grande":df,
+        "Santos":df
+    }
+
+    ranking = ranking_cidades.ranking_cidades(dados)
+
+    st.dataframe(ranking)
+
+    st.bar_chart(ranking.set_index("cidade"))
+
+except Exception as e:
+
+    st.write("erro ranking:", e)
+
