@@ -396,3 +396,16 @@ st.dataframe(df_risco)
 st.bar_chart(
     df_risco.set_index("cidade")["crescimento"]
 )
+
+
+import indice_transparencia
+
+st.subheader("🏛 Índice de transparência municipal")
+
+df_transp = indice_transparencia.indice_transparencia()
+
+st.dataframe(df_transp)
+
+st.bar_chart(
+    df_transp.set_index("cidade")["score_transparencia"]
+)
