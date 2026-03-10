@@ -1,42 +1,24 @@
 import streamlit as st
-import pydeck as pdk
-from modules.radar_nacional import gerar_base_nacional
+import pandas as pd
+import mapa_corrupcao_brasil
 
-st.title("🗺️ Mapa Nacional de Risco Fiscal")
+st.title("🌎 Radar Nacional de Corrupção")
 
-df = gerar_base_nacional()
+df = mapa_corrupcao_brasil.dados_mapa()
 
-def cor(score):
-    if score >= 7:
-        return [220, 30, 30, 160]
-    elif score >= 4:
-        return [255, 180, 0, 160]
-    return [0, 180, 0, 160]
+st.subheader("📊 Ranking de risco")
 
-df["color"] = df["score_risco"].apply(cor)
-df["raio"] = (df["score_risco"] * 8000).astype(int)
+st.dataframe(df.sort_values("risco",ascending=False))
 
-layer = pdk.Layer(
-    "ScatterplotLayer",
-    data=df,
-    get_position="[lon, lat]",
-    get_radius="raio",
-    get_fill_color="color",
-    pickable=True
-)
+st.subheader("🛰️ Mapa nacional")
 
-view_state = pdk.ViewState(
-    latitude=-15.8,
-    longitude=-47.9,
-    zoom=3.3
-)
+mapa = df.rename(columns={
+    "lat":"latitude",
+    "lon":"longitude"
+})
 
-deck = pdk.Deck(
-    layers=[layer],
-    initial_view_state=view_state,
-    tooltip={
-        "text": "Cidade: {cidade}\nEstado: {estado}\nScore: {score_risco}\nGasto: {gasto_total}"
-    }
-)
+st.map(mapa)
 
-st.pydeck_chart(deck)
+st.subheader("📈 Distribuição de risco")
+
+st.bar_chart(df.set_index("cidade")["risco"])
