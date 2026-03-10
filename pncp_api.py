@@ -3,7 +3,7 @@ import pandas as pd
 
 def buscar_contratos():
 
-    url="https://pncp.gov.br/api/consulta/v1/contratos"
+    url="https://pncp.gov.br/api/consulta/v1/contratos?pagina=1"
 
     try:
 
@@ -25,8 +25,7 @@ def buscar_contratos():
                 "orgao":item.get("orgaoEntidade",""),
                 "empresa":item.get("razaoSocialFornecedor",""),
                 "valor":item.get("valorInicial",""),
-                "modalidade":item.get("modalidadeNome",""),
-                "data":item.get("dataPublicacao","")
+                "modalidade":item.get("modalidadeNome","")
             })
 
         return pd.DataFrame(contratos)
