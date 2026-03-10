@@ -63,3 +63,14 @@ ranking_empresas = contratos.empresas_suspeitas()
 st.dataframe(ranking_empresas)
 
 st.bar_chart(ranking_empresas.set_index("empresa"))
+
+
+import detector_corrupcao
+
+st.subheader("🚨 Detector automático de irregularidades")
+
+df_contratos = ranking_empresas.rename(columns={"empresa":"empresa","valor":"valor"})
+
+alertas = detector_corrupcao.detectar_irregularidades(df_contratos)
+
+st.dataframe(alertas)
