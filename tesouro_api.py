@@ -3,7 +3,7 @@ import pandas as pd
 
 def buscar_dados_municipio(codigo_ibge):
 
-    url = f"https://apidatalake.tesouro.gov.br/ords/siconfi/tt/rreo?codigo_ibge={codigo_ibge}"
+    url = f"https://apidatalake.tesouro.gov.br/ords/siconfi/tt/rreo_anexo13?codigo_ibge={codigo_ibge}"
 
     try:
 
