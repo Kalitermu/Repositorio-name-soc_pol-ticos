@@ -22,4 +22,8 @@ def distribuicao_dinheiro():
 
     df = pd.DataFrame(data)
 
+    total = df["valor"].sum()
+
+    df["percentual"] = (df["valor"] / total) * 100
+
     return df

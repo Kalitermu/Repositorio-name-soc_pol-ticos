@@ -199,3 +199,21 @@ df_dist = distribuicao_dinheiro.distribuicao_dinheiro()
 st.dataframe(df_dist)
 
 st.bar_chart(df_dist.set_index("categoria")["valor"])
+
+
+st.subheader("🥧 Distribuição percentual do orçamento")
+
+st.write(df_dist[["categoria","percentual"]])
+
+st.bar_chart(df_dist.set_index("categoria")["percentual"])
+
+
+import indice_social
+
+st.subheader("🌎 Índice social por município")
+
+df_social = indice_social.indice_social()
+
+st.dataframe(df_social)
+
+st.bar_chart(df_social.set_index("cidade")["indice_social"])
