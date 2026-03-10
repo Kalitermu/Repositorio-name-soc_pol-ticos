@@ -730,3 +730,20 @@ if "df" in locals():
         st.bar_chart(
             df_sec.set_index("secretaria")["_valor_base"]
         )
+
+
+import top_despesas
+
+st.subheader("💰 Top 10 maiores despesas da prefeitura")
+
+if "df" in locals():
+
+    df_top = top_despesas.top_despesas(df)
+
+    if not df_top.empty:
+
+        st.dataframe(df_top)
+
+        st.bar_chart(
+            df_top.set_index("_conta_ref")["_valor_base"]
+        )
