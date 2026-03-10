@@ -99,3 +99,17 @@ deck = pdk.Deck(
 st.subheader("Mapa de beneficiários")
 
 st.pydeck_chart(deck)
+
+
+import detector_bolsa_familia
+
+st.subheader("🚨 Detector de crescimento do Bolsa Família")
+
+df_alerta = detector_bolsa_familia.detectar_crescimento(df_ano)
+
+st.dataframe(df_alerta)
+
+alertas = df_alerta[df_alerta["alerta"] != "normal"]
+
+if not alertas.empty:
+    st.warning("Crescimento anormal detectado")
