@@ -1,19 +1,20 @@
 import streamlit as st
 import pandas as pd
 from tesouro_api import buscar_dados_municipio
-import investigacao_financeira
-import score_corrupcao
+import detector_cartel
 
-st.title("🔎 Modo Investigação")
+st.title("🔎 Investigação")
 
 cidades = {
-    "São Paulo": "3550308",
-    "Praia Grande": "3541000",
-    "Santos": "3548500"
+    "São Paulo":"3550308",
+    "Santos":"3548500",
+    "Praia Grande":"3541000",
+    "São Vicente":"3551009",
+    "Guarujá":"3518701"
 }
 
-cidade = st.selectbox("Escolha a cidade", list(cidades.keys()))
-codigo = cidades[cidade]
+cidade_nome = st.selectbox("Escolha a cidade", list(cidades.keys()))
+codigo = cidades[cidade_nome]
 
 df = buscar_dados_municipio(codigo)
 
@@ -23,33 +24,39 @@ if df.empty:
 
 else:
 
+    # detectar coluna de valor automaticamente
     if "valor" in df.columns:
         df["valor_calc"] = pd.to_numeric(df["valor"], errors="coerce")
 
     elif "valor_item" in df.columns:
         df["valor_calc"] = pd.to_numeric(df["valor_item"], errors="coerce")
 
+    else:
+        st.error("Coluna de valor não encontrada.")
+        st.write(df.columns)
+        st.stop()
+
     df = df.dropna(subset=["valor_calc"])
 
-    score = score_corrupcao.calcular_score(df)
+    media = df["valor_calc"].mean()
 
-    st.subheader("🚨 Score de risco fiscal")
+    st.subheader("🚨 Possíveis picos de gasto")
 
-    st.metric("Score de corrupção", score)
+    picos = df[df["valor_calc"] > media * 2]
 
-    analise = investigacao_financeira.analisar(df)
+    if picos.empty:
+        st.info("Nenhum pico detectado.")
+    else:
+        st.dataframe(picos.head(20))
 
-    st.subheader("📊 Análise investigativa")
+    st.subheader("🔁 Valores repetidos")
 
-    st.dataframe(analise.head(20))
+    repetidos = df[df["valor_calc"].duplicated(keep=False)]
 
-    alertas = analise[analise["alerta"] != "normal"]
-
-    st.subheader("🚨 Alertas encontrados")
-
-    st.dataframe(alertas)
-
-import detector_cartel
+    if repetidos.empty:
+        st.info("Nenhum valor repetido.")
+    else:
+        st.dataframe(repetidos.head(20))
 
 st.subheader("🔗 Possível cartel de empresas")
 
