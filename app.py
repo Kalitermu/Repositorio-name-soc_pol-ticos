@@ -847,3 +847,22 @@ except Exception as e:
 
     st.write("erro ranking:", e)
 
+
+
+st.subheader("🗺️ Mapa do dinheiro público")
+
+import pandas as pd
+
+dados = pd.DataFrame({
+    "lat":[-23.98,-23.99,-23.97],
+    "lon":[-46.39,-46.38,-46.40],
+    "obra":[
+        "Reforma escola",
+        "Pavimentação rua",
+        "Construção UBS"
+    ],
+    "valor":[4000000,7200000,5000000]
+})
+
+st.map(dados)
+
