@@ -1,23 +1,26 @@
-
 import pandas as pd
 
 def empresas_suspeitas():
 
-    data = {
+    dados = pd.DataFrame({
         "empresa":[
-        "Construtora Alpha",
-        "Construtora Beta",
-        "Serviços Delta",
-        "Construtora Alpha",
-        "Construtora Alpha",
-        "Serviços Delta",
-        "Tech Infra"
+            "Construtora Alpha",
+            "Construtora Beta",
+            "Engenharia Brasil",
+            "Obras Litoral"
         ],
-        "valor":[50000000,20000000,15000000,70000000,90000000,20000000,10000000]
-    }
+        "valor":[
+            5000000,
+            7000000,
+            3000000,
+            2500000
+        ]
+    })
 
-    df = pd.DataFrame(data)
+    df = dados.sort_values("valor",ascending=False)
 
-    ranking = df.groupby("empresa")["valor"].sum().sort_values(ascending=False)
+    df = df.rename(columns={
+        "valor":"valor_total"
+    })
 
-    return ranking.reset_index()
+    return df
