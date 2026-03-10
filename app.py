@@ -500,3 +500,14 @@ st.dataframe(df_empresas_rank)
 st.bar_chart(
     df_empresas_rank.set_index("empresa")["cidades"]
 )
+
+
+import repeticao_contratos
+
+st.subheader("🔁 Empresas com contratos repetidos no mesmo órgão")
+
+df_rep = repeticao_contratos.repeticao_por_orgao()
+
+st.dataframe(df_rep)
+
+st.bar_chart(df_rep.set_index("empresa")["contratos"])
