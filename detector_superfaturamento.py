@@ -1,29 +1,35 @@
-
 import pandas as pd
 
-def detectar_superfaturamento(df):
+def detectar_superfaturamento():
 
-    if "valor" not in df.columns:
-        return pd.DataFrame()
+    dados = pd.DataFrame({
+        "cidade":[
+            "Santos",
+            "São Vicente",
+            "Praia Grande",
+            "Guarujá"
+        ],
+        "obra":[
+            "pavimentacao",
+            "pavimentacao",
+            "pavimentacao",
+            "pavimentacao"
+        ],
+        "valor":[
+            3000000,
+            8200000,
+            3500000,
+            3200000
+        ]
+    })
 
-    df = df.copy()
+    media = dados.groupby("obra")["valor"].mean().reset_index()
+    media = media.rename(columns={"valor":"media_obra"})
 
-    media = df["valor"].mean()
-    desvio = df["valor"].std()
+    df = dados.merge(media,on="obra")
 
-    if desvio == 0:
-        df["zscore"] = 0
-    else:
-        df["zscore"] = (df["valor"] - media) / desvio
+    df["indice"] = df["valor"]/df["media_obra"]
 
-    def classificar(z):
-        if z >= 3:
-            return "🚨 possível superfaturamento"
-        elif z >= 2:
-            return "⚠ valor alto"
-        else:
-            return "normal"
+    suspeitos = df[df["indice"] > 1.8]
 
-    df["alerta"] = df["zscore"].apply(classificar)
-
-    return df.sort_values("zscore", ascending=False)
+    return suspeitos

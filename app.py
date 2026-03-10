@@ -46,3 +46,13 @@ elif menu == "Redes de Contratos":
 elif menu == "Distribuição do Dinheiro":
     import distribuicao_dinheiro
 
+
+
+import detector_superfaturamento
+
+st.subheader("🚨 Detector de possível superfaturamento")
+
+df_super = detector_superfaturamento.detectar_superfaturamento()
+
+st.dataframe(df_super)
+
