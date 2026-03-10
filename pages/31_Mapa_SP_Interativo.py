@@ -24,7 +24,8 @@ layer = pdk.Layer(
     data=df,
     get_position='[lon, lat]',
     get_color='cor',
-    get_radius=4000
+    get_radius=4000,
+    pickable=True
 )
 
 view_state = pdk.ViewState(
@@ -33,9 +34,15 @@ view_state = pdk.ViewState(
     zoom=8
 )
 
+tooltip = {
+    "html": "<b>Cidade:</b> {cidade} <br/> <b>Risco:</b> {risco}",
+    "style": {"backgroundColor": "black", "color": "white"}
+}
+
 deck = pdk.Deck(
     layers=[layer],
-    initial_view_state=view_state
+    initial_view_state=view_state,
+    tooltip=tooltip
 )
 
 st.pydeck_chart(deck)
