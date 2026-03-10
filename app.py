@@ -262,3 +262,14 @@ st.pydeck_chart(deck)
 
 st.subheader("📊 Score integrado por município")
 st.bar_chart(df_mapa_integrado.set_index("municipio")["score_integrado"])
+
+
+import grafo_dinheiro
+import streamlit.components.v1 as components
+
+st.subheader("🔗 Grafo de conexões do dinheiro público")
+
+arquivo = grafo_dinheiro.grafo_completo()
+
+with open(arquivo,"r",encoding="utf-8") as f:
+    components.html(f.read(),height=620)
