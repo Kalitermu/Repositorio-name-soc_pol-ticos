@@ -4,49 +4,65 @@ from tesouro_api import buscar_dados_municipio
 
 st.title("🚨 Radar Fiscal")
 
-cidades = {
-    "São Paulo": "3550308",
-    "Praia Grande": "3541000",
-    "Santos": "3548500"
-}
+st.write("Consulta de orçamento público direto do Tesouro Nacional.")
 
-cidade_nome = st.selectbox("Escolha o município", list(cidades.keys()))
-codigo = cidades[cidade_nome]
+codigo = st.text_input(
+"Código IBGE do município",
+"3550308"
+)
 
-df = buscar_dados_municipio(codigo)
+if st.button("Consultar"):
 
-if df.empty:
-    st.warning("Não foi possível carregar dados do Tesouro Nacional.")
-else:
+    df = buscar_dados_municipio(codigo)
 
-    # detectar coluna de valor automaticamente
-    if "valor" in df.columns:
-        valores = pd.to_numeric(df["valor"], errors="coerce")
-    elif "valor_item" in df.columns:
-        valores = pd.to_numeric(df["valor_item"], errors="coerce")
+    if df.empty:
+        st.warning("Não foi possível carregar dados do Tesouro Nacional.")
+
     else:
-        st.error("Coluna de valor não encontrada na API.")
-        st.write(df.columns)
-        st.stop()
 
-    valores = valores.dropna()
+        if "valor" in df.columns:
+            valores = pd.to_numeric(df["valor"], errors="coerce")
 
-    total = valores.sum()
-    media = valores.mean()
-    desvio = valores.std()
+        elif "valor_item" in df.columns:
+            valores = pd.to_numeric(df["valor_item"], errors="coerce")
 
-    st.subheader("📊 Estatísticas")
+        else:
+            st.error("Coluna de valor não encontrada na API.")
+            st.write(df.columns)
+            st.stop()
 
-    st.metric("Somatório do orçamento", f"R$ {total:,.0f}")
-    st.metric("Média de gastos", f"R$ {media:,.0f}")
-    st.metric("Desvio padrão", f"R$ {desvio:,.0f}")
+        valores = valores.dropna()
 
-    df["valor_calc"] = valores
+        total = valores.sum()
+        media = valores.mean()
+        desvio = valores.std()
 
-    top = df.sort_values("valor_calc", ascending=False).head(10)
+        st.subheader("📊 Estatísticas")
 
-    st.subheader("📋 Principais contas")
-    st.dataframe(top)
+        st.metric("Somatório do orçamento", f"R$ {total:,.0f}")
+        st.metric("Média de gastos", f"R$ {media:,.0f}")
+        st.metric("Desvio padrão", f"R$ {desvio:,.0f}")
 
-    st.subheader("📈 Distribuição de despesas")
-    st.bar_chart(top["valor_calc"])
+        df["valor_calc"] = valores
+
+        top = df.sort_values("valor_calc", ascending=False).head(10)
+
+        st.subheader("📋 Principais contas")
+
+        st.dataframe(top)
+
+        st.subheader("📈 Distribuição de despesas")
+
+        st.bar_chart(top["valor_calc"])
+
+import rastreador_dinheiro
+
+st.subheader("💰 Para onde vai o dinheiro público")
+
+destino = rastreador_dinheiro.rastrear(df)
+
+if destino.empty:
+    st.info("Não foi possível identificar as contas do orçamento.")
+else:
+    st.dataframe(destino.head(20))
+    st.bar_chart(destino.set_index("conta")["valor_calc"])
