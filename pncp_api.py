@@ -3,30 +3,33 @@ import pandas as pd
 
 def buscar_contratos():
 
-    url = "https://pncp.gov.br/api/consulta/v1/contratos"
+    url="https://pncp.gov.br/api/consulta/v1/contratos"
 
     try:
-        r = requests.get(url, timeout=30)
 
-        if r.status_code != 200:
+        r=requests.get(url,timeout=30)
+
+        if r.status_code!=200:
             return pd.DataFrame()
 
-        dados = r.json()
+        dados=r.json()
 
-        registros = []
+        if "data" not in dados:
+            return pd.DataFrame()
 
-        for item in dados.get("data", [])[:50]:
+        contratos=[]
 
-            registros.append({
-                "empresa": item.get("nomeFornecedor"),
-                "valor": item.get("valorTotal"),
-                "orgao": item.get("orgaoEntidade"),
-                "objeto": item.get("objetoContrato")
+        for item in dados["data"][:50]:
+
+            contratos.append({
+                "orgao":item.get("orgaoEntidade",""),
+                "empresa":item.get("razaoSocialFornecedor",""),
+                "valor":item.get("valorInicial",""),
+                "modalidade":item.get("modalidadeNome",""),
+                "data":item.get("dataPublicacao","")
             })
 
-        df = pd.DataFrame(registros)
+        return pd.DataFrame(contratos)
 
-        return df
-
-    except Exception:
+    except:
         return pd.DataFrame()
