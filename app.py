@@ -559,3 +559,28 @@ deck = pdk.Deck(
 )
 
 st.pydeck_chart(deck)
+
+
+import busca_empresa
+
+st.subheader("🔎 Busca investigativa por empresa")
+
+empresa = st.text_input("Digite o nome da empresa")
+
+if empresa:
+
+    df_emp, resumo = busca_empresa.buscar_empresa(empresa)
+
+    if df_emp is not None:
+
+        st.write("Resumo da empresa")
+
+        st.write(resumo)
+
+        st.write("Contratos encontrados")
+
+        st.dataframe(df_emp)
+
+    else:
+
+        st.warning("Empresa não encontrada")
