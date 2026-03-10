@@ -1,5 +1,17 @@
 import streamlit as st
 
+st.markdown("""
+
+<style>
+
+.stApp {background-color: #ffb347;}
+
+</style>
+
+""", unsafe_allow_html=True)
+
+import streamlit as st
+
 st.markdown("""<style>
 
 h1 {color:#FFA500;}
