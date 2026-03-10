@@ -713,3 +713,20 @@ if "df" in locals():
         st.bar_chart(
             df_area.set_index("area")["_valor_base"]
         )
+
+
+import secretarias_orcamento
+
+st.subheader("🏛 Distribuição do orçamento por secretaria")
+
+if "df" in locals():
+
+    df_sec = secretarias_orcamento.distribuicao_secretarias(df)
+
+    if not df_sec.empty:
+
+        st.dataframe(df_sec)
+
+        st.bar_chart(
+            df_sec.set_index("secretaria")["_valor_base"]
+        )
