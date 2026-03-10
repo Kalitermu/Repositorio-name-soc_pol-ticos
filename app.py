@@ -155,3 +155,14 @@ df_anom = detector_anomalias.detectar_anomalias(df)
 anomalias = df_anom[df_anom["alerta"] != "normal"]
 
 st.dataframe(anomalias[["_conta_ref","_valor_base","zscore","alerta"]])
+
+
+import padroes_municipios
+
+st.subheader("🔎 Padrões suspeitos entre municípios")
+
+df_padrao = padroes_municipios.padroes_municipios()
+
+st.dataframe(df_padrao)
+
+st.bar_chart(df_padrao.set_index("municipio")["gasto_publico"])
