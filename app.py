@@ -6,9 +6,9 @@ st.markdown("""
 
 .stApp {background-color:#ff8c00;}
 
-h1,h2,h3,h4,h5,h6 {color:white;}
+h1,h2,h3,h4,h5,h6 {color:black;}
 
-p,div,span,label {color:white;}
+p,div,span,label {color:black;}
 
 </style>
 
@@ -135,5 +135,5 @@ try:
     st.bar_chart(destino.set_index("area")["_valor_base"])
 
 except:
-    st.info("Ainda não foi possível identificar o destino das contas.")
+    st.warning("Os dados vieram sem conta identificada (ex.: SEM_CONTA), então ainda não dá para separar saúde, educação e obras.")
 
