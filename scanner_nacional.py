@@ -60,3 +60,7 @@ def coletar():
             pass
 
     return pd.DataFrame(resultado)
+
+def executar_scanner():
+    return coletar()
+

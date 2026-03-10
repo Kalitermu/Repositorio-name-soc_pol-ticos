@@ -1,26 +1,48 @@
 import streamlit as st
+import pandas as pd
 import pydeck as pdk
 import scanner_nacional
 
 st.title("🛰️ Scanner Nacional")
-
 st.write("Scanner automático de risco fiscal e contratos por município.")
 
-df = scanner_nacional.executar_scanner()
+try:
+    df = scanner_nacional.coletar()
+except:
+    df = pd.DataFrame()
+
+if df is None:
+    df = pd.DataFrame()
 
 if df.empty:
     st.warning("Nenhum dado disponível no scanner.")
     st.stop()
 
+# garantir colunas
+if "cidade" not in df.columns:
+    df["cidade"] = "desconhecida"
+
+if "alerta" not in df.columns:
+    df["alerta"] = "baixo"
+
+if "lat" not in df.columns:
+    df["lat"] = -23.9
+
+if "lon" not in df.columns:
+    df["lon"] = -46.3
+
+if "score_total" not in df.columns:
+    df["score_total"] = 1
+
 st.subheader("🏆 Ranking nacional")
 st.dataframe(df)
 
-def cor(alerta: str):
-    if "alto" in alerta:
-        return [255, 0, 0]
-    if "médio" in alerta:
-        return [255, 165, 0]
-    return [0, 180, 0]
+def cor(alerta):
+    if "alto" in str(alerta):
+        return [255,0,0]
+    if "médio" in str(alerta):
+        return [255,165,0]
+    return [0,180,0]
 
 df["cor"] = df["alerta"].apply(cor)
 
@@ -30,7 +52,6 @@ layer = pdk.Layer(
     get_position='[lon, lat]',
     get_fill_color='cor',
     get_radius=50000,
-    pickable=True
 )
 
 view = pdk.ViewState(latitude=-23.9, longitude=-46.3, zoom=6)
@@ -38,7 +59,6 @@ view = pdk.ViewState(latitude=-23.9, longitude=-46.3, zoom=6)
 deck = pdk.Deck(
     layers=[layer],
     initial_view_state=view,
-    tooltip={"text": "{cidade}\nScore: {score_total}\nAlerta: {alerta}"}
 )
 
 st.subheader("🌎 Mapa de risco")

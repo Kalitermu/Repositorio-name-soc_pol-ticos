@@ -55,3 +55,7 @@ def dados():
     })
 
     return df
+
+def dados_mapa():
+    return dados()
+
