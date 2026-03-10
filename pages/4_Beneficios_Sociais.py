@@ -5,7 +5,7 @@ import pydeck as pdk
 
 st.title("Benefícios Sociais")
 
-st.write("Visualização de famílias atendidas pelo Bolsa Família.")
+st.write("Análise de famílias e dependentes do Bolsa Família")
 
 data = {
     "cidade":[
@@ -31,21 +31,33 @@ data = {
         10800,
         15000,
         12000
+    ],
+    "dependentes":[
+        32000,
+        19000,
+        27000,
+        21000
     ]
 }
 
 df = pd.DataFrame(data)
 
-st.subheader("Famílias beneficiárias por cidade")
+st.subheader("Famílias e dependentes por cidade")
 
 st.dataframe(df)
+
+st.subheader("Distribuição de dependentes")
+
+st.bar_chart(
+    df.set_index("cidade")["dependentes"]
+)
 
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=df,
     get_position="[lon, lat]",
-    get_radius="familias",
-    get_fill_color=[255,0,0,160],
+    get_radius="dependentes",
+    get_fill_color=[255,100,0,160],
     pickable=True
 )
 
@@ -58,7 +70,9 @@ view = pdk.ViewState(
 deck = pdk.Deck(
     layers=[layer],
     initial_view_state=view,
-    tooltip={"text":"{cidade}\nFamílias: {familias}"}
+    tooltip={"text":"{cidade}\nFamílias: {familias}\nDependentes: {dependentes}"}
 )
+
+st.subheader("Mapa de dependentes por cidade")
 
 st.pydeck_chart(deck)
