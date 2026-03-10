@@ -217,3 +217,48 @@ df_social = indice_social.indice_social()
 st.dataframe(df_social)
 
 st.bar_chart(df_social.set_index("cidade")["indice_social"])
+
+
+import pydeck as pdk
+import dados_integrados
+
+st.subheader("🗺️ Mapa integrado de gasto, contratos e benefícios sociais")
+
+df_mapa_integrado = dados_integrados.dados_integrados()
+
+st.dataframe(df_mapa_integrado[[
+    "municipio",
+    "gasto_publico",
+    "contratos",
+    "beneficios_sociais",
+    "indice_social",
+    "score_integrado"
+]])
+
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df_mapa_integrado,
+    get_position="[lon, lat]",
+    get_radius="raio",
+    get_fill_color="[200, 30, 0, 140]",
+    pickable=True
+)
+
+view_state = pdk.ViewState(
+    latitude=-23.96,
+    longitude=-46.36,
+    zoom=8
+)
+
+deck = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={
+        "text": "Município: {municipio}\nGasto: {gasto_publico}\nContratos: {contratos}\nBenefícios: {beneficios_sociais}\nÍndice social: {indice_social}\nScore integrado: {score_integrado}"
+    }
+)
+
+st.pydeck_chart(deck)
+
+st.subheader("📊 Score integrado por município")
+st.bar_chart(df_mapa_integrado.set_index("municipio")["score_integrado"])
