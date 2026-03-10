@@ -696,3 +696,20 @@ if "df" in locals():
         st.write("Mapa de intensidade dos gastos")
 
         st.bar_chart(df_heat)
+
+
+import distribuicao_area
+
+st.subheader("📊 Distribuição do orçamento por área")
+
+if "df" in locals():
+
+    df_area = distribuicao_area.distribuicao_por_area(df)
+
+    if not df_area.empty:
+
+        st.dataframe(df_area)
+
+        st.bar_chart(
+            df_area.set_index("area")["_valor_base"]
+        )
