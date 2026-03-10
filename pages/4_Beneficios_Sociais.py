@@ -5,7 +5,7 @@ import pydeck as pdk
 
 st.title("Benefícios Sociais")
 
-st.write("Análise de famílias, dependentes e valores do Bolsa Família")
+st.write("Análise do Bolsa Família")
 
 data = {
     "cidade":[
@@ -56,15 +56,24 @@ st.dataframe(df)
 
 st.subheader("Valor total pago por cidade")
 
-st.bar_chart(
-    df.set_index("cidade")["valor_pago"]
-)
+st.bar_chart(df.set_index("cidade")["valor_pago"])
 
 st.subheader("Média por família")
 
-st.bar_chart(
-    df.set_index("cidade")["media_por_familia"]
-)
+st.bar_chart(df.set_index("cidade")["media_por_familia"])
+
+# evolução anual
+
+dados_ano = {
+    "ano":[2021,2022,2023,2024],
+    "valor_pago":[5000000,6800000,8100000,9000000]
+}
+
+df_ano = pd.DataFrame(dados_ano)
+
+st.subheader("Evolução do Bolsa Família por ano")
+
+st.line_chart(df_ano.set_index("ano"))
 
 layer = pdk.Layer(
     "ScatterplotLayer",
