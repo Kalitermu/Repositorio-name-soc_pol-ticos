@@ -166,3 +166,14 @@ df_padrao = padroes_municipios.padroes_municipios()
 st.dataframe(df_padrao)
 
 st.bar_chart(df_padrao.set_index("municipio")["gasto_publico"])
+
+
+import grafo_contratos
+import streamlit.components.v1 as components
+
+st.subheader("🔗 Rede de contratos entre municípios e empresas")
+
+arquivo = grafo_contratos.gerar_grafo()
+
+with open(arquivo,"r",encoding="utf-8") as f:
+    components.html(f.read(), height=520)
