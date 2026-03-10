@@ -144,3 +144,14 @@ df_invest = painel_investigativo.painel_investigativo()
 st.dataframe(df_invest)
 
 st.bar_chart(df_invest.set_index("municipio")["gasto_publico"])
+
+
+import detector_anomalias
+
+st.subheader("🚨 Detector de anomalias financeiras")
+
+df_anom = detector_anomalias.detectar_anomalias(df)
+
+anomalias = df_anom[df_anom["alerta"] != "normal"]
+
+st.dataframe(anomalias[["_conta_ref","_valor_base","zscore","alerta"]])
