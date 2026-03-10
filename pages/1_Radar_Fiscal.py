@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from tesouro_api import buscar_dados_municipio
+import rastreador_dinheiro
 
 st.title("🚨 Radar Fiscal")
 
@@ -16,6 +17,7 @@ if st.button("Consultar"):
     df = buscar_dados_municipio(codigo)
 
     if df.empty:
+
         st.warning("Não foi possível carregar dados do Tesouro Nacional.")
 
     else:
@@ -27,7 +29,7 @@ if st.button("Consultar"):
             valores = pd.to_numeric(df["valor_item"], errors="coerce")
 
         else:
-            st.error("Coluna de valor não encontrada na API.")
+            st.error("Coluna de valor não encontrada.")
             st.write(df.columns)
             st.stop()
 
@@ -55,14 +57,12 @@ if st.button("Consultar"):
 
         st.bar_chart(top["valor_calc"])
 
-import rastreador_dinheiro
+        st.subheader("💰 Para onde vai o dinheiro público")
 
-st.subheader("💰 Para onde vai o dinheiro público")
+        destino = rastreador_dinheiro.rastrear(df)
 
-destino = rastreador_dinheiro.rastrear(df)
-
-if destino.empty:
-    st.info("Não foi possível identificar as contas do orçamento.")
-else:
-    st.dataframe(destino.head(20))
-    st.bar_chart(destino.set_index("conta")["valor_calc"])
+        if destino.empty:
+            st.info("Não foi possível identificar as contas.")
+        else:
+            st.dataframe(destino.head(20))
+            st.bar_chart(destino.set_index("conta")["valor_calc"])
