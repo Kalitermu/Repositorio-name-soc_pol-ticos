@@ -663,3 +663,19 @@ if "df" in locals():
         st.line_chart(
             df_tempo.set_index(df_tempo.columns[1])["_valor_base"]
         )
+
+
+import detectar_picos
+
+st.subheader("🚨 Detector de picos anormais")
+
+if "df_tempo" in locals():
+
+    df_alertas = detectar_picos.detectar_picos(df_tempo)
+
+    st.dataframe(df_alertas)
+
+    picos = df_alertas[df_alertas["alerta"] != "normal"]
+
+    if not picos.empty:
+        st.warning("Picos anormais detectados")
