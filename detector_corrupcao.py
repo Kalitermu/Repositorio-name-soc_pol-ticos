@@ -1,28 +1,23 @@
-
 import pandas as pd
 
 def detectar_irregularidades(df):
 
-    media = df["valor"].mean()
+    if df.empty:
+        return pd.DataFrame()
 
-    alertas = []
+    media = df["valor_total"].mean()
 
-    for empresa, grupo in df.groupby("empresa"):
+    def risco(valor):
 
-        total = grupo["valor"].sum()
+        if valor > media * 2:
+            return "🚨 alto risco"
 
-        if total > media * 3:
-            alertas.append({
-                "empresa": empresa,
-                "motivo": "valor muito acima da média",
-                "total": total
-            })
+        elif valor > media:
+            return "⚠ atenção"
 
-        if len(grupo) >= 3:
-            alertas.append({
-                "empresa": empresa,
-                "motivo": "empresa repetida em vários contratos",
-                "total": total
-            })
+        else:
+            return "normal"
 
-    return pd.DataFrame(alertas)
+    df["alerta"] = df["valor_total"].apply(risco)
+
+    return df

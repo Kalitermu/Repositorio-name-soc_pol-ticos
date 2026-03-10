@@ -1,5 +1,6 @@
 import streamlit as st
 import contratos
+import detector_corrupcao
 
 st.title("🏢 Contratos Públicos")
 
@@ -24,6 +25,12 @@ else:
     st.subheader("📊 Ranking de empresas")
 
     st.dataframe(df)
+
+    st.subheader("🚨 Detector de irregularidades")
+
+    alertas = detector_corrupcao.detectar_irregularidades(df)
+
+    st.dataframe(alertas)
 
     st.subheader("📈 Distribuição de contratos")
 
