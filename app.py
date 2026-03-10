@@ -471,3 +471,17 @@ st.subheader("💰 Dados fiscais (Tesouro Nacional)")
 df_tesouro = tesouro_api.dados_tesouro()
 
 st.dataframe(df_tesouro)
+
+
+import radar_corrupcao
+
+st.subheader("🚨 Radar automático de risco de contratos")
+
+if "df_contratos" in locals():
+
+    df_risco = radar_corrupcao.radar_corrupcao(df_contratos)
+
+    st.dataframe(df_risco)
+
+    if not df_risco.empty:
+        st.bar_chart(df_risco["valor"])
