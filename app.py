@@ -188,3 +188,14 @@ df_redes = redes_suspeitas.detectar_redes_suspeitas()
 st.dataframe(df_redes)
 
 st.bar_chart(df_redes.set_index("empresa")["score_centralidade"])
+
+
+import distribuicao_dinheiro
+
+st.subheader("💰 Distribuição do dinheiro público")
+
+df_dist = distribuicao_dinheiro.distribuicao_dinheiro()
+
+st.dataframe(df_dist)
+
+st.bar_chart(df_dist.set_index("categoria")["valor"])
