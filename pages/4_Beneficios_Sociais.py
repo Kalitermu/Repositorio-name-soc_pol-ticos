@@ -5,7 +5,7 @@ import pydeck as pdk
 
 st.title("Benefícios Sociais")
 
-st.write("Análise de famílias e dependentes do Bolsa Família")
+st.write("Análise de famílias, dependentes e valores do Bolsa Família")
 
 data = {
     "cidade":[
@@ -37,19 +37,33 @@ data = {
         19000,
         27000,
         21000
+    ],
+    "valor_pago":[
+        9000000,
+        6200000,
+        7500000,
+        6800000
     ]
 }
 
 df = pd.DataFrame(data)
 
-st.subheader("Famílias e dependentes por cidade")
+df["media_por_familia"] = df["valor_pago"] / df["familias"]
+
+st.subheader("Tabela de benefícios")
 
 st.dataframe(df)
 
-st.subheader("Distribuição de dependentes")
+st.subheader("Valor total pago por cidade")
 
 st.bar_chart(
-    df.set_index("cidade")["dependentes"]
+    df.set_index("cidade")["valor_pago"]
+)
+
+st.subheader("Média por família")
+
+st.bar_chart(
+    df.set_index("cidade")["media_por_familia"]
 )
 
 layer = pdk.Layer(
@@ -57,7 +71,7 @@ layer = pdk.Layer(
     data=df,
     get_position="[lon, lat]",
     get_radius="dependentes",
-    get_fill_color=[255,100,0,160],
+    get_fill_color=[255,120,0,160],
     pickable=True
 )
 
@@ -70,9 +84,9 @@ view = pdk.ViewState(
 deck = pdk.Deck(
     layers=[layer],
     initial_view_state=view,
-    tooltip={"text":"{cidade}\nFamílias: {familias}\nDependentes: {dependentes}"}
+    tooltip={"text":"{cidade}\nFamílias: {familias}\nDependentes: {dependentes}\nValor: {valor_pago}"}
 )
 
-st.subheader("Mapa de dependentes por cidade")
+st.subheader("Mapa de beneficiários")
 
 st.pydeck_chart(deck)
