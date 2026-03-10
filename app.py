@@ -1,3 +1,15 @@
+
+
+import painel_nacional
+
+st.subheader("🌎 Radar Nacional de Transparência")
+
+df_nat = painel_nacional.dados_nacionais()
+
+st.dataframe(df_nat)
+
+st.bar_chart(df_nat.set_index("municipio")["risco"])
+
 import streamlit as st
 
 st.set_page_config(layout="wide")
