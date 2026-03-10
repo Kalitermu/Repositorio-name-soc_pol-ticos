@@ -80,3 +80,20 @@ st.dataframe(df_rede)
 
 st.bar_chart(df_rede.set_index("empresa")["valor_total"])
 
+
+
+import traduzir_contas
+
+st.subheader("📊 Destino do dinheiro público")
+
+try:
+    df["area"] = df["_conta_ref"].apply(traduzir_contas.traduzir_conta)
+
+    destino = df.groupby("area")["_valor_base"].sum().reset_index()
+
+    st.dataframe(destino)
+    st.bar_chart(destino.set_index("area")["_valor_base"])
+
+except:
+    st.info("Ainda não foi possível identificar o destino das contas.")
+
