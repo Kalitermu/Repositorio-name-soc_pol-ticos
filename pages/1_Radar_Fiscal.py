@@ -2,22 +2,23 @@ import streamlit as st
 import pandas as pd
 from tesouro_api import buscar_dados_municipio
 import rastreador_dinheiro
+import cidades
 
 st.title("🚨 Radar Fiscal")
-
 st.write("Consulta de orçamento público direto do Tesouro Nacional.")
 
-codigo = st.text_input(
-"Código IBGE do município",
-"3550308"
+cidade_nome = st.selectbox(
+    "Escolha a cidade",
+    list(cidades.cidades.keys())
 )
+
+codigo = cidades.cidades[cidade_nome]
 
 if st.button("Consultar"):
 
     df = buscar_dados_municipio(codigo)
 
     if df.empty:
-
         st.warning("Não foi possível carregar dados do Tesouro Nacional.")
 
     else:
@@ -50,11 +51,9 @@ if st.button("Consultar"):
         top = df.sort_values("valor_calc", ascending=False).head(10)
 
         st.subheader("📋 Principais contas")
-
         st.dataframe(top)
 
         st.subheader("📈 Distribuição de despesas")
-
         st.bar_chart(top["valor_calc"])
 
         st.subheader("💰 Para onde vai o dinheiro público")
