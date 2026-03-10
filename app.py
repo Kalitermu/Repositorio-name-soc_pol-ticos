@@ -896,3 +896,27 @@ try:
 except Exception as e:
     st.write("erro detector:", e)
 
+
+
+import comparador_obras
+
+st.subheader("📊 Comparação de custo por tipo de obra")
+
+dados_obras = pd.DataFrame({
+    "obra":[
+        "Reforma escola",
+        "Pavimentação rua",
+        "Construção UBS"
+    ],
+    "tipo":[
+        "educacao",
+        "pavimentacao",
+        "saude"
+    ],
+    "valor":[4000000,7200000,5000000]
+})
+
+analise = comparador_obras.comparar_custos(dados_obras)
+
+st.dataframe(analise)
+
