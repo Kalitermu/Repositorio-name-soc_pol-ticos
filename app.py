@@ -775,3 +775,20 @@ except Exception as e:
 
     st.write("erro distribuição:", e)
 
+
+
+import analise_contratos
+
+st.subheader("🏢 Empresas com mais contratos públicos")
+
+if "df_contratos" in locals():
+
+    ranking = analise_contratos.analisar_contratos(df_contratos)
+
+    if not ranking.empty:
+
+        st.dataframe(ranking)
+
+        st.bar_chart(
+            ranking.set_index("empresa")["valor_total"]
+        )
