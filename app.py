@@ -52,3 +52,14 @@ st.subheader("🚨 Alertas")
 alertas = df[df["risco"]!="Normal"]
 
 st.dataframe(alertas)
+
+
+import contratos
+
+st.subheader("🏢 Empresas que mais ganham contratos")
+
+ranking_empresas = contratos.empresas_suspeitas()
+
+st.dataframe(ranking_empresas)
+
+st.bar_chart(ranking_empresas.set_index("empresa"))
