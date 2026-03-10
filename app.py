@@ -866,3 +866,33 @@ dados = pd.DataFrame({
 
 st.map(dados)
 
+
+
+import detector_superfaturamento
+
+st.subheader("🚨 Detector de valores possivelmente superfaturados")
+
+try:
+
+    dados_obras = pd.DataFrame({
+        "obra":[
+            "Reforma escola",
+            "Pavimentação rua",
+            "Construção UBS"
+        ],
+        "valor":[4000000,7200000,5000000]
+    })
+
+    analise = detector_superfaturamento.detectar_superfaturamento(dados_obras)
+
+    suspeitos = analise[analise["alerta"] != "normal"]
+
+    if not suspeitos.empty:
+        st.warning("Possíveis valores acima do padrão detectados")
+        st.dataframe(suspeitos[["obra","valor","zscore","alerta"]])
+    else:
+        st.success("Nenhum valor fora do padrão detectado")
+
+except Exception as e:
+    st.write("erro detector:", e)
+
