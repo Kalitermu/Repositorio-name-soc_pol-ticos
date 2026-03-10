@@ -1,29 +1,14 @@
 import pandas as pd
+import pncp_api
 
 def empresas_suspeitas():
 
-    dados = pd.DataFrame({
-        "empresa":[
-            "Construtora Norberto Odebrecht",
-            "Andrade Gutierrez",
-            "Camargo Corrêa",
-            "Queiroz Galvão",
-            "OAS Engenharia",
-            "Andrade Gutierrez",
-            "Camargo Corrêa"
-        ],
-        "valor":[
-            250000000,
-            180000000,
-            120000000,
-            90000000,
-            85000000,
-            60000000,
-            40000000
-        ]
-    })
+    df = pncp_api.buscar_contratos()
 
-    ranking = dados.groupby("empresa")["valor"].sum().reset_index()
+    if df.empty:
+        return pd.DataFrame()
+
+    ranking = df.groupby("empresa")["valor"].sum().reset_index()
 
     ranking = ranking.rename(columns={"valor":"valor_total"})
 
@@ -34,7 +19,7 @@ def empresas_suspeitas():
     def risco(valor):
 
         if valor > media * 2:
-            return "⚠ alta concentração"
+            return "⚠ concentração alta"
 
         elif valor > media:
             return "🟡 atenção"
