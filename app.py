@@ -372,3 +372,14 @@ alertas = anomalia_orcamento.detectar_anomalia(df_hist)
 
 for a in alertas:
     st.warning(a)
+
+
+import previsao_gastos
+
+st.subheader("🔮 Previsão de gasto público")
+
+df_prev = previsao_gastos.prever_gastos()
+
+st.dataframe(df_prev)
+
+st.bar_chart(df_prev.set_index("cidade")["previsao_2024"])
