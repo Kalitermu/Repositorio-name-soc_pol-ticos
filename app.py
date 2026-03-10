@@ -122,3 +122,14 @@ df_social = programas_sociais.dados_sociais()
 st.dataframe(df_social)
 
 st.bar_chart(df_social.set_index("cidade")["beneficiarios"])
+
+
+import ranking_nacional
+
+st.subheader("🏆 Ranking nacional de risco fiscal")
+
+df_ranking = ranking_nacional.ranking_municipios()
+
+st.dataframe(df_ranking)
+
+st.bar_chart(df_ranking.set_index("municipio")["risco"])
