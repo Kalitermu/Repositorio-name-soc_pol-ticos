@@ -792,3 +792,36 @@ if "df_contratos" in locals():
         st.bar_chart(
             ranking.set_index("empresa")["valor_total"]
         )
+
+st.subheader("💰 Para onde vai cada R$1 do orçamento")
+
+try:
+
+    if "_valor_base" in df.columns:
+
+        total = df["_valor_base"].sum()
+
+        mapa_funcoes = {
+            10:"Saúde",
+            12:"Educação",
+            15:"Urbanismo",
+            4:"Administração",
+            8:"Assistência social"
+        }
+
+        if "funcao" in df.columns:
+
+            df["area"] = df["funcao"].map(mapa_funcoes)
+
+            dist = df.groupby("area")["_valor_base"].sum()
+
+            reais = (dist / total).sort_values(ascending=False)
+
+            st.dataframe(reais)
+
+            st.bar_chart(reais)
+
+except Exception as e:
+
+    st.write("erro simulador:", e)
+
