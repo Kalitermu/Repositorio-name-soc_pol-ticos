@@ -601,3 +601,26 @@ if "df" in locals():
         st.bar_chart(
             df_rank.set_index("_conta_ref")["score_risco"]
         )
+
+
+import crescimento_contas
+
+st.subheader("📈 Crescimento anormal por conta (ano a ano)")
+
+if "df" in locals():
+
+    df_cres = crescimento_contas.crescimento_por_conta(df)
+
+    if not df_cres.empty:
+
+        st.dataframe(df_cres[[
+            "_conta_ref",
+            "ano",
+            "_valor_base",
+            "crescimento",
+            "risco"
+        ]])
+
+        st.bar_chart(
+            df_cres.set_index("_conta_ref")["crescimento"]
+        )
