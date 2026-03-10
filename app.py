@@ -485,3 +485,18 @@ if "df_contratos" in locals():
 
     if not df_risco.empty:
         st.bar_chart(df_risco["valor"])
+
+
+import empresas_multicidades
+
+st.subheader("🏢 Empresas com contratos em várias cidades")
+
+df_empresas_map, df_empresas_rank = empresas_multicidades.empresas_multicidades()
+
+st.write("Ranking de empresas por número de cidades")
+
+st.dataframe(df_empresas_rank)
+
+st.bar_chart(
+    df_empresas_rank.set_index("empresa")["cidades"]
+)
