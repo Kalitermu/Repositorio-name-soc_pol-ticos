@@ -273,3 +273,34 @@ arquivo = grafo_dinheiro.grafo_completo()
 
 with open(arquivo,"r",encoding="utf-8") as f:
     components.html(f.read(),height=620)
+
+
+import investimentos_areas
+
+st.subheader("💰 Investimento por área pública")
+
+df_area = investimentos_areas.investimentos_areas()
+
+st.dataframe(df_area)
+
+st.subheader("📊 Comparação por área")
+
+st.bar_chart(
+    df_area.set_index("municipio")[[
+        "saude",
+        "educacao",
+        "obras",
+        "seguranca",
+        "social"
+    ]]
+)
+
+
+import alertas_areas
+
+st.subheader("🚨 Alertas de distribuição de investimento")
+
+alertas = alertas_areas.alertas_areas(df_area)
+
+for a in alertas:
+    st.warning(a)
