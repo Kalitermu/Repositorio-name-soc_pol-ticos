@@ -1,40 +1,57 @@
 import pandas as pd
 
-def dados_mapa():
+def dados():
 
-    dados = pd.DataFrame({
+    df = pd.DataFrame({
+
         "cidade":[
-            "São Paulo",
-            "Santos",
-            "Praia Grande",
-            "São Vicente",
-            "Guarujá",
-            "Cubatão"
+        "São Paulo",
+        "Guarulhos",
+        "Itaquaquecetuba",
+        "Suzano",
+        "Poá",
+        "Ferraz de Vasconcelos",
+        "Santos",
+        "Praia Grande",
+        "São Vicente"
         ],
+
         "lat":[
-            -23.55,
-            -23.95,
-            -24.00,
-            -23.96,
-            -23.99,
-            -23.89
+        -23.55,
+        -23.45,
+        -23.48,
+        -23.54,
+        -23.52,
+        -23.54,
+        -23.96,
+        -24.00,
+        -23.96
         ],
+
         "lon":[
-            -46.63,
-            -46.33,
-            -46.41,
-            -46.38,
-            -46.26,
-            -46.42
+        -46.63,
+        -46.53,
+        -46.34,
+        -46.31,
+        -46.34,
+        -46.37,
+        -46.33,
+        -46.41,
+        -46.38
         ],
+
         "risco":[
-            8,
-            6,
-            5,
-            7,
-            4,
-            6
+        9.1,
+        7.5,
+        6.8,
+        6.2,
+        5.9,
+        5.6,
+        4.7,
+        4.3,
+        4.1
         ]
+
     })
 
-    return dados
+    return df
