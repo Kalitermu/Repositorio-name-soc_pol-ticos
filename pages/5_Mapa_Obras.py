@@ -1,33 +1,41 @@
 import streamlit as st
-import pandas as pd
+import pydeck as pdk
 import obras_publicas
 
-st.title("🗺️ Mapa de Obras Públicas")
+st.title("🏗️ Mapa de Obras Públicas")
 
-st.write("""
-Visualização de investimentos públicos no mapa.
+df = obras_publicas.dados()
 
-Mostra:
-- localização de obras
-- valor investido
-- empresa responsável
-""")
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=df,
+    get_position='[lon, lat]',
+    get_color='[255,0,0]',
+    get_radius=5000,
+    pickable=True
+)
 
-df = obras_publicas.carregar_obras()
+view = pdk.ViewState(
+    latitude=-23.7,
+    longitude=-46.4,
+    zoom=8
+)
 
-st.subheader("📋 Lista de obras")
+tooltip = {
+    "html": "<b>Cidade:</b> {cidade}<br>"
+            "<b>Obra:</b> {obra}<br>"
+            "<b>Empresa:</b> {empresa}<br>"
+            "<b>Valor:</b> R$ {valor}",
+    "style": {"backgroundColor": "black", "color": "white"}
+}
 
+deck = pdk.Deck(
+    layers=[layer],
+    initial_view_state=view,
+    tooltip=tooltip
+)
+
+st.pydeck_chart(deck)
+
+st.subheader("📊 Lista de obras")
 st.dataframe(df)
-
-st.subheader("📍 Localização das obras")
-
-mapa = df.rename(columns={
-    "lat":"latitude",
-    "lon":"longitude"
-})
-
-st.map(mapa)
-
-st.subheader("💰 Valor por obra")
-
-st.bar_chart(df.set_index("obra")["valor"])
