@@ -14,4 +14,17 @@ def gerar_dados():
         {"cidade":"São Vicente","lat":-23.96,"lon":-46.38,"score":4.1}
     ]
 
-    return pd.DataFrame(dados)
+    df = pd.DataFrame(dados)
+
+    # gerar alerta automaticamente
+    def definir_alerta(score):
+        if score > 8:
+            return "alto"
+        elif score > 5:
+            return "medio"
+        else:
+            return "baixo"
+
+    df["alerta"] = df["score"].apply(definir_alerta)
+
+    return df
