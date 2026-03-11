@@ -51,7 +51,7 @@ layer = pdk.Layer(
     data=df,
     get_position='[lon, lat]',
     get_fill_color='cor',
-    get_radius=50000,
+    get_radius=4000,
 )
 
 view = pdk.ViewState(latitude=-23.9, longitude=-46.3, zoom=6)
