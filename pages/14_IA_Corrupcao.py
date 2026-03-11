@@ -28,7 +28,7 @@ if st.button("Analisar"):
 
         df = df.dropna(subset=["valor_calc"])
 
-        analise = ia_corrupcao.analisar_corrupcao(df)
+        analise = ia_corrupcao.analisar(df)
 
         st.subheader("🚨 Alertas detectados")
 
