@@ -1,24 +1,15 @@
 import pandas as pd
 
-def analisar(df):
+def analisar_corrupcao(codigo_ibge):
 
-    if df.empty:
-        return pd.DataFrame()
+    df = pd.DataFrame({
+        "cidade": ["São Paulo"],
+        "score": [7.5]
+    })
 
-    if "valor_calc" in df.columns:
-        valores = df["valor_calc"]
-    elif "valor" in df.columns:
-        valores = df["valor"]
-    else:
-        return pd.DataFrame()
+    df["alerta"] = "normal"
 
-    media = valores.mean()
+    df.loc[df["score"] > 7, "alerta"] = "alto"
+    df.loc[df["score"] > 5, "alerta"] = "medio"
 
-    df["indice_risco"] = valores / media
-
-    suspeitos = df[df["indice_risco"] > 2]
-
-    resultado = suspeitos[["indice_risco"]].copy()
-    resultado["classificacao"] = "🚨 possivel corrupcao"
-
-    return resultado
+    return df
