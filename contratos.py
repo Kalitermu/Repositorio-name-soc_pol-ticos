@@ -3,7 +3,7 @@ import pandas as pd
 
 def buscar_contratos():
 
-    url = "https://pncp.gov.br/api/consulta/v1/contratos"
+    url = "https://pncp.gov.br/api/consulta/v1/contratos?pagina=1&tamanhoPagina=50"
 
     try:
 
@@ -14,26 +14,25 @@ def buscar_contratos():
 
         dados = r.json()
 
-        lista = dados.get("data", [])
-
         contratos = []
 
-        for item in lista[:50]:
+        lista = dados.get("data", [])
 
-            cidade = item.get("orgaoEntidade", {}).get("municipioNome", "N/A")
-            obra = item.get("objeto", "N/A")
-            empresa = item.get("fornecedor", "N/A")
-            valor = item.get("valorGlobal", 0)
+        for item in lista:
+
+            empresa = item.get("nomeFornecedor", "Não informado")
+            objeto = item.get("objetoCompra", "Não informado")
+            valor = item.get("valorTotalEstimado", 0)
 
             contratos.append({
-                "cidade": cidade,
-                "obra": obra,
                 "empresa": empresa,
+                "objeto": objeto,
                 "valor": valor
             })
 
-        return pd.DataFrame(contratos)
+        df = pd.DataFrame(contratos)
+
+        return df
 
     except Exception:
-
         return pd.DataFrame()
