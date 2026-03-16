@@ -3,16 +3,20 @@ import pandas as pd
 import sys
 import os
 
-# garante que o Python encontre os módulos do projeto
+# garante que o Streamlit encontre os outros arquivos do projeto
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+# tenta importar o coletor de obras
 try:
     from coletor_obras_pncp import buscar_obras
 except:
-    # caso o módulo não seja encontrado, cria dataframe vazio
     def buscar_obras():
         return pd.DataFrame(columns=["cidade","descricao","empresa","valor_total"])
 
+
+# -----------------------------
+# DADOS DE EXEMPLO (ranking)
+# -----------------------------
 
 def empresas_suspeitas():
 
@@ -82,7 +86,7 @@ st.dataframe(ranking)
 
 
 # -----------------------------
-# ALERTAS
+# DETECTOR
 # -----------------------------
 
 ranking["alerta"] = ranking["valor_total"].apply(
@@ -104,19 +108,21 @@ st.bar_chart(ranking.set_index("empresa")["valor_total"])
 
 
 # -----------------------------
-# OBRAS REAIS PNCP
+# OBRAS REAIS
 # -----------------------------
 
 st.subheader("🏗️ Obras públicas encontradas")
 
 df_obras = buscar_obras()
 
-if df_obras.empty:
-    st.info("Nenhuma obra encontrada ou erro ao carregar dados.")
+st.write("Total de obras encontradas:", len(df_obras))
+
+if len(df_obras) > 0:
+
+    st.dataframe(df_obras)
+
+    st.bar_chart(df_obras.groupby("cidade")["valor_total"].sum())
+
 else:
-    st.dataframe(df_obras[[
-        "cidade",
-        "descricao",
-        "empresa",
-        "valor_total"
-    ]])
+
+    st.warning("Nenhuma obra encontrada na API no momento.")
