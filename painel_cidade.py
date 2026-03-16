@@ -1,34 +1,31 @@
-import pandas as pd
-import contratos
+import streamlit as st
+import painel_idade
 
-def gerar_painel(codigo_ibge):
+st.title("🏙️ Painel Investigativo da Cidade")
 
-    df = contratos.buscar_contratos()
+codigo = st.text_input("Código IBGE", "3550308")
 
-    if df.empty:
-        return {
-            "cidade": codigo_ibge,
-            "total_contratos": 0,
-            "valor_total": 0,
-            "top_empresas": pd.DataFrame(),
-            "contratos": pd.DataFrame()
-        }
+if st.button("Gerar painel"):
 
-    total_contratos = len(df)
-    valor_total = df["valor"].sum()
+    dados = painel_idade.gerar_painel(codigo)
 
-    ranking = (
-        df.groupby("empresa")["valor"]
-        .sum()
-        .reset_index()
-        .sort_values("valor", ascending=False)
-        .head(10)
-    )
+    st.subheader("📊 Estatísticas")
 
-    return {
-        "cidade": codigo_ibge,
-        "total_contratos": total_contratos,
-        "valor_total": valor_total,
-        "top_empresas": ranking,
-        "contratos": df
-    }
+    st.metric("Total de contratos", dados["total_contratos"])
+    st.metric("Orçamento total", f"R$ {dados['valor_total']:,.0f}")
+
+    st.subheader("🏢 Empresas com mais contratos")
+
+    st.dataframe(dados["top_empresas"])
+
+    st.subheader("📋 Contratos encontrados")
+
+    st.dataframe(dados["contratos"])
+
+    if not dados["top_empresas"].empty:
+
+        st.subheader("📈 Distribuição por empresa")
+
+        st.bar_chart(
+            dados["top_empresas"].set_index("empresa")["valor"]
+        )
