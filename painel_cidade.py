@@ -8,7 +8,6 @@ def gerar_painel(codigo_ibge):
     df = contratos.buscar_contratos()
 
     if df.empty:
-
         return {
             "cidade": codigo_ibge,
             "total_contratos": 0,
@@ -17,13 +16,13 @@ def gerar_painel(codigo_ibge):
             "contratos": pd.DataFrame()
         }
 
-    # total contratos
+    # total de contratos
     total_contratos = len(df)
 
     # valor total
     valor_total = df["valor"].sum()
 
-    # ranking empresas
+    # ranking de empresas
     ranking = (
         df.groupby("empresa")["valor"]
         .sum()
