@@ -3,27 +3,31 @@ import pandas as pd
 import sys
 import os
 
+# garante encontrar módulos
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from coletor_obras_pncp import buscar_obras
+# tenta importar coletor
+try:
+    from coletor_obras_pncp import buscar_obras
+except:
+    def buscar_obras():
+        return pd.DataFrame()
 
 
 st.title("🏢 Contratos Públicos")
 
-st.write("Análise de contratos e obras públicas.")
-
 st.write("""
 Esta página mostra:
 
-• ranking de empresas  
-• detector de irregularidades  
-• distribuição de contratos  
-• lista de obras públicas
+• empresas que mais recebem contratos  
+• concentração de fornecedores  
+• ranking de contratos  
+• comparação de valores  
 """)
 
 
 # -----------------------------
-# RANKING DE EXEMPLO
+# DADOS DE EXEMPLO
 # -----------------------------
 
 dados = {
@@ -52,13 +56,18 @@ ranking = df.groupby("empresa")["valor_total"].sum().reset_index()
 
 ranking = ranking.sort_values("valor_total", ascending=False)
 
+
+# -----------------------------
+# RANKING
+# -----------------------------
+
 st.subheader("📊 Ranking de empresas")
 
 st.dataframe(ranking)
 
 
 # -----------------------------
-# DETECTOR
+# ALERTAS
 # -----------------------------
 
 ranking["alerta"] = ranking["valor_total"].apply(
@@ -83,32 +92,64 @@ st.bar_chart(ranking.set_index("empresa")["valor_total"])
 # OBRAS REAIS
 # -----------------------------
 
-st.subheader("🏗️ Obras públicas encontradas")
+st.subheader("🏗️ Obras públicas")
 
 df_obras = buscar_obras()
 
-st.write("Total de contratos encontrados:", len(df_obras))
+# se não vier nada da API
+if df_obras.empty:
+
+    st.warning("Nenhuma obra real carregada. Mostrando exemplo.")
+
+    dados_obras = {
+        "cidade": [
+            "Praia Grande",
+            "Santos",
+            "São Paulo",
+            "Guarulhos",
+            "Itanhaém"
+        ],
+
+        "obra": [
+            "Pavimentação urbana",
+            "Construção de escola",
+            "Reforma de hospital",
+            "Ampliação de terminal",
+            "Revitalização da orla"
+        ],
+
+        "empresa": [
+            "Construtora Alpha",
+            "Infra Brasil",
+            "Construtora Alpha",
+            "Porto Engenharia",
+            "Litoral Obras"
+        ],
+
+        "valor": [
+            120000,
+            850000,
+            2000000,
+            450000,
+            700000
+        ]
+    }
+
+    df_obras = pd.DataFrame(dados_obras)
 
 
-# filtro de cidade
-
-cidade = st.selectbox(
-    "Filtrar por cidade",
-    ["Todas"] + sorted(df_obras["cidade"].dropna().unique().tolist())
-)
-
-if cidade != "Todas":
-    df_obras = df_obras[df_obras["cidade"] == cidade]
-
+st.subheader("📋 Lista de obras")
 
 st.dataframe(df_obras)
 
 
-# gráfico por cidade
+# -----------------------------
+# GRÁFICO POR CIDADE
+# -----------------------------
 
-if len(df_obras) > 0:
+if "cidade" in df_obras.columns:
 
-    st.subheader("📊 Valor total por cidade")
+    st.subheader("📊 Gastos por cidade")
 
     graf = df_obras.groupby("cidade")["valor"].sum()
 
