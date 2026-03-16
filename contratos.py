@@ -4,7 +4,8 @@ import requests
 
 st.title("🏢 Contratos Públicos Reais")
 
-st.write("Investigação de contratos do Portal Nacional de Contratações Públicas")
+st.write("Dados do Portal Nacional de Contratações Públicas")
+
 
 def buscar_contratos():
 
@@ -18,9 +19,10 @@ def buscar_contratos():
 
         contratos = []
 
+        # se não for lista evita erro
         if isinstance(dados, list):
 
-            for item in dados[:50]:
+            for item in dados[:30]:
 
                 cidade = item.get("orgaoEntidade", {}).get("municipioNome")
 
@@ -46,9 +48,10 @@ def buscar_contratos():
 
 df = buscar_contratos()
 
+
 if df.empty:
 
-    st.warning("Nenhum contrato carregado no momento")
+    st.warning("Não foi possível carregar contratos agora.")
 
 else:
 
@@ -63,3 +66,4 @@ else:
     st.subheader("🏢 Empresas que mais recebem")
 
     st.dataframe(ranking)
+    
