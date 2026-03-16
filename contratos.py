@@ -18,7 +18,7 @@ def buscar_contratos():
 
         lista = dados.get("data", [])
 
-        for item in lista[:30]:
+        for item in lista[:50]:
 
             cidade = item.get("orgaoEntidade", {}).get("municipioNome", "N/A")
             obra = item.get("objeto", "N/A")
