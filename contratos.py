@@ -36,3 +36,49 @@ def empresas_suspeitas():
     )
 
     return ranking
+st.subheader("🔎 Investigação de contratos")
+
+# empresa que mais ganha
+ranking_empresas = (
+    df_obras.groupby("empresa")["valor"]
+    .agg(["count","sum"])
+    .reset_index()
+)
+
+ranking_empresas = ranking_empresas.sort_values(
+    "sum",
+    ascending=False
+)
+
+ranking_empresas.columns = [
+    "empresa",
+    "quantidade_contratos",
+    "valor_total"
+]
+
+st.write("Empresas que mais recebem dinheiro público")
+
+st.dataframe(ranking_empresas)
+
+
+# possível favorecimento
+suspeitas = ranking_empresas[
+    ranking_empresas["quantidade_contratos"] > 3
+]
+
+st.subheader("🚨 Possível concentração de contratos")
+
+st.dataframe(suspeitas)
+
+
+# valor médio de obras
+media_obras = df_obras["valor"].mean()
+
+st.subheader("💰 Comparação de valores")
+
+df_obras["alerta"] = df_obras["valor"].apply(
+    lambda x: "⚠️ valor acima da média"
+    if x > media_obras * 2 else "normal"
+)
+
+st.dataframe(df_obras)
