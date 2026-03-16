@@ -1,7 +1,6 @@
 import requests
 import pandas as pd
 
-
 def buscar_obras():
 
     URL = "https://pncp.gov.br/api/consulta/v1/contratos"
