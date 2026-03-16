@@ -20,16 +20,11 @@ def buscar_contratos():
 
         contratos = []
 
-        # PNCP normalmente retorna {"data": [...]}
         lista = dados.get("data", [])
 
         for item in lista[:30]:
 
-            cidade = (
-                item.get("orgaoEntidade", {})
-                .get("municipioNome", "N/A")
-            )
-
+            cidade = item.get("orgaoEntidade", {}).get("municipioNome", "N/A")
             obra = item.get("objeto", "N/A")
             empresa = item.get("fornecedor", "N/A")
             valor = item.get("valorGlobal", 0)
@@ -41,16 +36,13 @@ def buscar_contratos():
                 "valor": valor
             })
 
-        df = pd.DataFrame(contratos)
+        return pd.DataFrame(contratos)
 
-        return df
-
-    except Exception:
+    except:
         return pd.DataFrame()
 
 
 df = buscar_contratos()
-
 
 if df.empty:
 
@@ -61,12 +53,8 @@ else:
     st.subheader("📋 Contratos encontrados")
     st.dataframe(df)
 
-    ranking = (
-        df.groupby("empresa")["valor"]
-        .sum()
-        .reset_index()
-        .sort_values("valor", ascending=False)
-    )
+    ranking = df.groupby("empresa")["valor"].sum().reset_index()
+    ranking = ranking.sort_values("valor", ascending=False)
 
     st.subheader("🏢 Empresas que mais recebem")
     st.dataframe(ranking)
