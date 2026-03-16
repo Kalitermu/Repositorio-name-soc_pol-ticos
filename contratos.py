@@ -1,15 +1,15 @@
 import streamlit as st
 import pandas as pd
 
+# -----------------------------
+# TÍTULO
+# -----------------------------
 st.title("🏢 Contratos Públicos")
-
 st.write("Investigação simples de contratos públicos")
 
-
 # -----------------------------
-# DADOS (exemplo)
+# DADOS (exemplo simples)
 # -----------------------------
-
 dados = {
     "cidade": [
         "Praia Grande",
@@ -18,15 +18,13 @@ dados = {
         "Praia Grande",
         "Guarulhos"
     ],
-
     "obra": [
         "Pavimentação urbana",
         "Construção de escola",
         "Reforma hospital",
-        "Campo futebol",
-        "Terminal ônibus"
+        "Campo de futebol",
+        "Terminal de ônibus"
     ],
-
     "empresa": [
         "Construtora Alpha",
         "Infra Brasil",
@@ -34,7 +32,6 @@ dados = {
         "Construtora Alpha",
         "Porto Engenharia"
     ],
-
     "valor": [
         120000,
         850000,
@@ -46,50 +43,53 @@ dados = {
 
 df = pd.DataFrame(dados)
 
-
 # -----------------------------
 # LISTA DE OBRAS
 # -----------------------------
-
 st.subheader("📋 Lista de obras")
-
 st.dataframe(df)
 
-
 # -----------------------------
-# EMPRESAS QUE MAIS GANHAM
+# EMPRESAS QUE MAIS RECEBEM
 # -----------------------------
-
 ranking = df.groupby("empresa")["valor"].sum().reset_index()
-
 ranking = ranking.sort_values("valor", ascending=False)
 
 st.subheader("🏢 Empresas que mais recebem")
-
 st.dataframe(ranking)
 
-
 # -----------------------------
-# ALERTA DE VALOR ALTO
+# DETECTOR SIMPLES
 # -----------------------------
-
 media = df["valor"].mean()
 
 df["alerta"] = df["valor"].apply(
-    lambda x: "⚠️ valor alto" if x > media*2 else "normal"
+    lambda x: "⚠️ valor alto" if x > media * 2 else "normal"
 )
 
 st.subheader("🚨 Possíveis valores suspeitos")
-
 st.dataframe(df)
-
 
 # -----------------------------
 # GRÁFICO
 # -----------------------------
-
 st.subheader("📊 Gastos por empresa")
-
 graf = df.groupby("empresa")["valor"].sum()
-
 st.bar_chart(graf)
+
+# -----------------------------
+# FILTRO POR CIDADE
+# -----------------------------
+st.subheader("🔎 Filtrar por cidade")
+
+cidade = st.selectbox(
+    "Selecione a cidade",
+    ["Todas"] + sorted(df["cidade"].unique().tolist())
+)
+
+if cidade != "Todas":
+    df_filtrado = df[df["cidade"] == cidade]
+else:
+    df_filtrado = df
+
+st.dataframe(df_filtrado)
