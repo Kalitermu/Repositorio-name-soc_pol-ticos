@@ -1,12 +1,12 @@
 import requests
 import pandas as pd
 
-
 def buscar_contratos():
 
     url = "https://pncp.gov.br/api/consulta/v1/contratos"
 
     try:
+
         r = requests.get(url, timeout=30)
 
         if r.status_code != 200:
@@ -14,10 +14,9 @@ def buscar_contratos():
 
         dados = r.json()
 
-        contratos = []
-
-        # PNCP normalmente retorna {"data": [...]}
         lista = dados.get("data", [])
+
+        contratos = []
 
         for item in lista[:50]:
 
@@ -33,9 +32,8 @@ def buscar_contratos():
                 "valor": valor
             })
 
-        df = pd.DataFrame(contratos)
-
-        return df
+        return pd.DataFrame(contratos)
 
     except Exception:
+
         return pd.DataFrame()
