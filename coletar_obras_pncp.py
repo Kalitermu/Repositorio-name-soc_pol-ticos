@@ -1,11 +1,12 @@
 import requests
 import pandas as pd
 
+
 def buscar_obras():
 
-    contratos = []
+    obras = []
 
-    for pagina in range(1, 10):
+    for pagina in range(1, 40):
 
         url = f"https://pncp.gov.br/api/consulta/v1/contratos?pagina={pagina}"
 
@@ -22,16 +23,27 @@ def buscar_obras():
 
             for item in dados:
 
-                contratos.append({
-                    "cidade": item.get("orgaoEntidade", {}).get("municipioNome", "desconhecido"),
-                    "descricao": item.get("objeto", "contrato público"),
-                    "empresa": item.get("fornecedor", "não informado"),
-                    "valor_total": item.get("valorGlobal", 0)
+                cidade = item.get("orgaoEntidade", {}).get("municipioNome", "desconhecido")
+
+                orgao = item.get("orgaoEntidade", {}).get("razaoSocial", "não informado")
+
+                obra = item.get("objeto", "contrato público")
+
+                empresa = item.get("fornecedor", "não informado")
+
+                valor = item.get("valorGlobal", 0)
+
+                obras.append({
+                    "cidade": cidade,
+                    "orgao": orgao,
+                    "obra": obra,
+                    "empresa": empresa,
+                    "valor": valor
                 })
 
         except Exception:
             continue
 
-    df = pd.DataFrame(contratos)
+    df = pd.DataFrame(obras)
 
     return df
