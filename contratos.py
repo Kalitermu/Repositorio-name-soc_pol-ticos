@@ -4,48 +4,62 @@ import requests
 
 st.title("🏢 Contratos Públicos Reais")
 
-st.write("Dados do Portal Nacional de Contratações Públicas")
+st.write("Investigação de contratos do Portal Nacional de Contratações Públicas")
 
 def buscar_contratos():
 
     url = "https://pncp.gov.br/api/consulta/v1/contratos"
 
-    r = requests.get(url)
+    try:
 
-    dados = r.json()
+        r = requests.get(url, timeout=30)
 
-    contratos = []
+        dados = r.json()
 
-    for item in dados[:50]:
+        contratos = []
 
-        cidade = item.get("orgaoEntidade", {}).get("municipioNome")
+        if isinstance(dados, list):
 
-        obra = item.get("objeto")
+            for item in dados[:50]:
 
-        empresa = item.get("fornecedor")
+                cidade = item.get("orgaoEntidade", {}).get("municipioNome")
 
-        valor = item.get("valorGlobal")
+                obra = item.get("objeto")
 
-        contratos.append({
-            "cidade": cidade,
-            "obra": obra,
-            "empresa": empresa,
-            "valor": valor
-        })
+                empresa = item.get("fornecedor")
 
-    return pd.DataFrame(contratos)
+                valor = item.get("valorGlobal")
+
+                contratos.append({
+                    "cidade": cidade,
+                    "obra": obra,
+                    "empresa": empresa,
+                    "valor": valor
+                })
+
+        return pd.DataFrame(contratos)
+
+    except:
+
+        return pd.DataFrame()
 
 
 df = buscar_contratos()
 
-st.subheader("📋 Contratos encontrados")
+if df.empty:
 
-st.dataframe(df)
+    st.warning("Nenhum contrato carregado no momento")
 
-ranking = df.groupby("empresa")["valor"].sum().reset_index()
+else:
 
-ranking = ranking.sort_values("valor", ascending=False)
+    st.subheader("📋 Contratos encontrados")
 
-st.subheader("🏢 Empresas que mais recebem")
+    st.dataframe(df)
 
-st.dataframe(ranking)
+    ranking = df.groupby("empresa")["valor"].sum().reset_index()
+
+    ranking = ranking.sort_values("valor", ascending=False)
+
+    st.subheader("🏢 Empresas que mais recebem")
+
+    st.dataframe(ranking)
