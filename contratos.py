@@ -3,82 +3,54 @@ import pandas as pd
 import sys
 import os
 
-# garante que o Streamlit encontre os outros arquivos do projeto
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# tenta importar o coletor de obras
-try:
-    from coletor_obras_pncp import buscar_obras
-except:
-    def buscar_obras():
-        return pd.DataFrame(columns=["cidade","descricao","empresa","valor_total"])
+from coletor_obras_pncp import buscar_obras
 
-
-# -----------------------------
-# DADOS DE EXEMPLO (ranking)
-# -----------------------------
-
-def empresas_suspeitas():
-
-    dados = {
-        "empresa": [
-            "Construtora Alpha",
-            "Construtora Beta",
-            "Engenharia Brasil",
-            "Infra Litoral",
-            "Construtora Alpha",
-            "Infra Litoral"
-        ],
-
-        "valor_total": [
-            5000000,
-            7000000,
-            3000000,
-            2500000,
-            8000000,
-            4000000
-        ]
-    }
-
-    df = pd.DataFrame(dados)
-
-    classificacao = (
-        df.groupby("empresa")["valor_total"]
-        .sum()
-        .reset_index()
-    )
-
-    classificacao = classificacao.sort_values(
-        "valor_total",
-        ascending=False
-    )
-
-    return classificacao
-
-
-# -----------------------------
-# TÍTULO
-# -----------------------------
 
 st.title("🏢 Contratos Públicos")
 
-st.write("Análise de contratos e empresas.")
+st.write("Análise de contratos e obras públicas.")
 
 st.write("""
 Esta página mostra:
 
-• empresas que mais recebem contratos  
-• concentração de fornecedores  
-• ranking de contratos  
-• comparação de valores  
+• ranking de empresas  
+• detector de irregularidades  
+• distribuição de contratos  
+• lista de obras públicas
 """)
 
 
 # -----------------------------
-# RANKING
+# RANKING DE EXEMPLO
 # -----------------------------
 
-ranking = empresas_suspeitas()
+dados = {
+    "empresa": [
+        "Construtora Alpha",
+        "Construtora Beta",
+        "Engenharia Brasil",
+        "Infra Litoral",
+        "Construtora Alpha",
+        "Infra Litoral"
+    ],
+
+    "valor_total": [
+        5000000,
+        7000000,
+        3000000,
+        2500000,
+        8000000,
+        4000000
+    ]
+}
+
+df = pd.DataFrame(dados)
+
+ranking = df.groupby("empresa")["valor_total"].sum().reset_index()
+
+ranking = ranking.sort_values("valor_total", ascending=False)
 
 st.subheader("📊 Ranking de empresas")
 
@@ -115,14 +87,29 @@ st.subheader("🏗️ Obras públicas encontradas")
 
 df_obras = buscar_obras()
 
-st.write("Total de obras encontradas:", len(df_obras))
+st.write("Total de contratos encontrados:", len(df_obras))
+
+
+# filtro de cidade
+
+cidade = st.selectbox(
+    "Filtrar por cidade",
+    ["Todas"] + sorted(df_obras["cidade"].dropna().unique().tolist())
+)
+
+if cidade != "Todas":
+    df_obras = df_obras[df_obras["cidade"] == cidade]
+
+
+st.dataframe(df_obras)
+
+
+# gráfico por cidade
 
 if len(df_obras) > 0:
 
-    st.dataframe(df_obras)
+    st.subheader("📊 Valor total por cidade")
 
-    st.bar_chart(df_obras.groupby("cidade")["valor_total"].sum())
+    graf = df_obras.groupby("cidade")["valor"].sum()
 
-else:
-
-    st.warning("Nenhuma obra encontrada na API no momento.")
+    st.bar_chart(graf)
