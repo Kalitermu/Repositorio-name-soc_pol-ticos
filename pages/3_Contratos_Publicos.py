@@ -14,7 +14,8 @@ Esta página mostra:
 - comparação de valores
 """)
 
-df = contratos.empresas_suspeitas()
+# buscar dados reais
+df = contratos.buscar_contratos()
 
 if df.empty:
 
@@ -24,7 +25,14 @@ else:
 
     st.subheader("📊 Ranking de empresas")
 
-    st.dataframe(df)
+    ranking = (
+        df.groupby("empresa")["valor"]
+        .sum()
+        .reset_index()
+        .sort_values("valor", ascending=False)
+    )
+
+    st.dataframe(ranking)
 
     st.subheader("🚨 Detector de irregularidades")
 
@@ -34,4 +42,4 @@ else:
 
     st.subheader("📈 Distribuição de contratos")
 
-    st.bar_chart(df.set_index("empresa")["valor_total"])
+    st.bar_chart(ranking.set_index("empresa")["valor"])
