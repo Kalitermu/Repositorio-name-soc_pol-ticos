@@ -3,7 +3,8 @@ import pandas as pd
 import requests
 
 st.title("🏢 Contratos Públicos Reais")
-st.write("Dados do Portal Nacional de Contratações Públicas")
+st.write("Dados do Portal Nacional de Contratações Públicas (PNCP)")
+
 
 def buscar_contratos():
 
@@ -11,21 +12,26 @@ def buscar_contratos():
 
     try:
         r = requests.get(url, timeout=30)
+
+        if r.status_code != 200:
+            return pd.DataFrame()
+
         dados = r.json()
 
         contratos = []
 
-        # PNCP geralmente retorna um dicionário com "data"
+        # PNCP normalmente retorna {"data": [...]}
         lista = dados.get("data", [])
 
         for item in lista[:30]:
 
-            cidade = item.get("orgaoEntidade", {}).get("municipioNome", "N/A")
+            cidade = (
+                item.get("orgaoEntidade", {})
+                .get("municipioNome", "N/A")
+            )
 
             obra = item.get("objeto", "N/A")
-
             empresa = item.get("fornecedor", "N/A")
-
             valor = item.get("valorGlobal", 0)
 
             contratos.append({
@@ -35,26 +41,32 @@ def buscar_contratos():
                 "valor": valor
             })
 
-        return pd.DataFrame(contratos)
+        df = pd.DataFrame(contratos)
 
-    except Exception as e:
-        st.error(f"Erro ao carregar dados: {e}")
+        return df
+
+    except Exception:
         return pd.DataFrame()
 
 
 df = buscar_contratos()
 
+
 if df.empty:
 
-    st.warning("Não foi possível carregar contratos agora.")
+    st.warning("⚠️ Não foi possível carregar contratos agora.")
 
 else:
 
     st.subheader("📋 Contratos encontrados")
     st.dataframe(df)
 
-    ranking = df.groupby("empresa")["valor"].sum().reset_index()
-    ranking = ranking.sort_values("valor", ascending=False)
+    ranking = (
+        df.groupby("empresa")["valor"]
+        .sum()
+        .reset_index()
+        .sort_values("valor", ascending=False)
+    )
 
     st.subheader("🏢 Empresas que mais recebem")
     st.dataframe(ranking)
