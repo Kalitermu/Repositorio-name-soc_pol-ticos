@@ -5,12 +5,11 @@ def buscar_obras():
 
     contratos = []
 
-    for pagina in range(1,50):
+    for pagina in range(1, 50):
 
         url = f"https://pncp.gov.br/api/consulta/v1/contratos?pagina={pagina}"
 
         try:
-
             r = requests.get(url, timeout=30)
             dados = r.json()
 
@@ -18,7 +17,6 @@ def buscar_obras():
                 break
 
             for item in dados:
-
                 contratos.append({
                     "cidade": item.get("orgaoEntidade", {}).get("municipioNome"),
                     "empresa": item.get("fornecedor", ""),
