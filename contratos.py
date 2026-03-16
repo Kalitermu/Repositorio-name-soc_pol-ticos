@@ -1,84 +1,95 @@
+import streamlit as st
 import pandas as pd
 
-def empresas_suspeitas():
+st.title("🏢 Contratos Públicos")
 
-    dados = {
-        "empresa": [
-            "Construtora Alpha",
-            "Construtora Beta",
-            "Engenharia Brasil",
-            "Infra Litoral",
-            "Construtora Alpha",
-            "Infra Litoral"
-        ],
+st.write("Investigação simples de contratos públicos")
 
-        "valor_total": [
-            5000000,
-            7000000,
-            3000000,
-            2500000,
-            8000000,
-            4000000
-        ]
-    }
 
-    df = pd.DataFrame(dados)
+# -----------------------------
+# DADOS (exemplo)
+# -----------------------------
 
-    ranking = (
-        df.groupby("empresa")["valor_total"]
-        .sum()
-        .reset_index()
-    )
+dados = {
+    "cidade": [
+        "Praia Grande",
+        "Santos",
+        "São Paulo",
+        "Praia Grande",
+        "Guarulhos"
+    ],
 
-    ranking = ranking.sort_values(
-        "valor_total",
-        ascending=False
-    )
+    "obra": [
+        "Pavimentação urbana",
+        "Construção de escola",
+        "Reforma hospital",
+        "Campo futebol",
+        "Terminal ônibus"
+    ],
 
-    return ranking
-st.subheader("🔎 Investigação de contratos")
+    "empresa": [
+        "Construtora Alpha",
+        "Infra Brasil",
+        "Construtora Alpha",
+        "Construtora Alpha",
+        "Porto Engenharia"
+    ],
 
-# empresa que mais ganha
-ranking_empresas = (
-    df_obras.groupby("empresa")["valor"]
-    .agg(["count","sum"])
-    .reset_index()
+    "valor": [
+        120000,
+        850000,
+        2000000,
+        17000000,
+        450000
+    ]
+}
+
+df = pd.DataFrame(dados)
+
+
+# -----------------------------
+# LISTA DE OBRAS
+# -----------------------------
+
+st.subheader("📋 Lista de obras")
+
+st.dataframe(df)
+
+
+# -----------------------------
+# EMPRESAS QUE MAIS GANHAM
+# -----------------------------
+
+ranking = df.groupby("empresa")["valor"].sum().reset_index()
+
+ranking = ranking.sort_values("valor", ascending=False)
+
+st.subheader("🏢 Empresas que mais recebem")
+
+st.dataframe(ranking)
+
+
+# -----------------------------
+# ALERTA DE VALOR ALTO
+# -----------------------------
+
+media = df["valor"].mean()
+
+df["alerta"] = df["valor"].apply(
+    lambda x: "⚠️ valor alto" if x > media*2 else "normal"
 )
 
-ranking_empresas = ranking_empresas.sort_values(
-    "sum",
-    ascending=False
-)
+st.subheader("🚨 Possíveis valores suspeitos")
 
-ranking_empresas.columns = [
-    "empresa",
-    "quantidade_contratos",
-    "valor_total"
-]
-
-st.write("Empresas que mais recebem dinheiro público")
-
-st.dataframe(ranking_empresas)
+st.dataframe(df)
 
 
-# possível favorecimento
-suspeitas = ranking_empresas[
-    ranking_empresas["quantidade_contratos"] > 3
-]
+# -----------------------------
+# GRÁFICO
+# -----------------------------
 
-st.subheader("🚨 Possível concentração de contratos")
+st.subheader("📊 Gastos por empresa")
 
-st.dataframe(suspeitas)
+graf = df.groupby("empresa")["valor"].sum()
 
-
-# valor médio de obras
-media_obras = df_obras["valor"].mean()
-
-st.subheader("💰 Comparação de valores")
-
-df_obras["alerta"] = df_obras["valor"].apply(
-    lambda x: "⚠️ valor acima da média"
-    if x > media_obras * 2 else "normal"
-)
-
-st.dataframe(df_obras)
+st.bar_chart(graf)
