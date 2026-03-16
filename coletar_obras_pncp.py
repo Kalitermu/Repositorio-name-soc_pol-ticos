@@ -3,30 +3,35 @@ import pandas as pd
 
 def buscar_obras():
 
-    URL = "https://pncp.gov.br/api/consulta/v1/contratos"
+    contratos = []
 
-    try:
+    for pagina in range(1,50):
 
-        r = requests.get(URL, timeout=30)
-        dados = r.json()
+        url = f"https://pncp.gov.br/api/consulta/v1/contratos?pagina={pagina}"
 
-        contratos = []
+        try:
 
-        for item in dados:
+            r = requests.get(url, timeout=30)
+            dados = r.json()
 
-            contratos.append({
-                "cidade": item.get("orgaoEntidade", {}).get("municipioNome"),
-                "empresa": item.get("fornecedor", ""),
-                "valor_inicial": item.get("valorInicial", 0),
-                "valor_total": item.get("valorGlobal", 0),
-                "data_inicio": item.get("dataVigenciaInicial", ""),
-                "data_fim": item.get("dataVigenciaFinal", ""),
-                "descricao": item.get("objeto", "")
-            })
+            if not isinstance(dados, list) or len(dados) == 0:
+                break
 
-        df = pd.DataFrame(contratos)
+            for item in dados:
 
-        return df
+                contratos.append({
+                    "cidade": item.get("orgaoEntidade", {}).get("municipioNome"),
+                    "empresa": item.get("fornecedor", ""),
+                    "valor_inicial": item.get("valorInicial", 0),
+                    "valor_total": item.get("valorGlobal", 0),
+                    "data_inicio": item.get("dataVigenciaInicial", ""),
+                    "data_fim": item.get("dataVigenciaFinal", ""),
+                    "descricao": item.get("objeto", "")
+                })
 
-    except:
-        return pd.DataFrame()
+        except:
+            pass
+
+    df = pd.DataFrame(contratos)
+
+    return df
