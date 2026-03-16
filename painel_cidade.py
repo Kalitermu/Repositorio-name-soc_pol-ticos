@@ -1,49 +1,41 @@
 import pandas as pd
-from tesouro_api import buscar_dados_municipio
 import contratos
+
 
 def gerar_painel(codigo_ibge):
 
-    df = buscar_dados_municipio(codigo_ibge)
+    # buscar contratos
+    df = contratos.buscar_contratos()
 
     if df.empty:
-        return None
 
-    if "valor" in df.columns:
-        valores = pd.to_numeric(df["valor"], errors="coerce")
+        return {
+            "cidade": codigo_ibge,
+            "total_contratos": 0,
+            "valor_total": 0,
+            "top_empresas": pd.DataFrame(),
+            "contratos": pd.DataFrame()
+        }
 
-    elif "valor_item" in df.columns:
-        valores = pd.to_numeric(df["valor_item"], errors="coerce")
+    # total contratos
+    total_contratos = len(df)
 
-    else:
-        return None
+    # valor total
+    valor_total = df["valor"].sum()
 
-    valores = valores.dropna()
-
-    total = valores.sum()
-    media = valores.mean()
-    desvio = valores.std()
-
-    repeticoes = valores.duplicated().sum()
-
-    score = 0
-
-    if desvio > media:
-        score += 3
-
-    if repeticoes > 5:
-        score += 2
-
-    if valores.max() > media * 5:
-        score += 4
-
-    contratos_df = contratos.empresas_suspeitas()
+    # ranking empresas
+    ranking = (
+        df.groupby("empresa")["valor"]
+        .sum()
+        .reset_index()
+        .sort_values("valor", ascending=False)
+        .head(10)
+    )
 
     return {
-        "total":total,
-        "media":media,
-        "desvio":desvio,
-        "repeticoes":repeticoes,
-        "score":score,
-        "contratos":contratos_df
+        "cidade": codigo_ibge,
+        "total_contratos": total_contratos,
+        "valor_total": valor_total,
+        "top_empresas": ranking,
+        "contratos": df
     }
